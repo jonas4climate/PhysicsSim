@@ -66,6 +66,13 @@ public class PhysicsObject3D implements Cloneable {
       this.s.setVector(s);
    }
 
+   public PhysicsObject3D(String name, double m, double[] s, double[] v) {
+      this.name = name;
+      this.m = m;
+      this.s.setVector(s);
+      this.v.setVector(v);
+   }
+
    /**
     * Advanced constructor to customize all variables but name
     * 
@@ -104,7 +111,7 @@ public class PhysicsObject3D implements Cloneable {
     */
    @Override
    public String toString() {
-      return String.format("PhysicsObject3D '%10s': m=%.2f, s=[%.2f,%.2f,%.2f], v=[%.2f,%.2f,%.2f], a=[%.2f,%.2f,%.2f]",
+      return String.format("PhysicsObject3D '%10s': m=%6.3e, s=[%.2f,%.2f,%.2f], v=[%.2f,%.2f,%.2f], a=[%.2f,%.2f,%.2f]",
             name, m, s.vector[0], s.vector[1], s.vector[2], v.vector[0], v.vector[1], v.vector[2], a.vector[0], a.vector[1], a.vector[2]);
    }
 

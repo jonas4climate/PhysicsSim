@@ -11,12 +11,12 @@ public class Sim extends Constants {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = 3600*24*365; // 1 year
+   public static final int SIM_T_S = 60*60*24*365;
 
    /**
     * Delta Time (Timestep) in ms
     */
-   public static final long DT_MS = 1000*60*60;
+   public static final int DT_MS = 100;
 
    /**
     * Delta Time (Timestep) in s
@@ -27,6 +27,11 @@ public class Sim extends Constants {
     * Iterations of modelStep
     */
    public static final double N = (SIM_T_S * (1 / DT_S));
+
+   /**
+    * Keeps track of current time of simulation
+    */
+   private static double currentTimeInSim = 0d;
 
    /**
     * List containing all currently existing objects in the Sim
@@ -42,12 +47,19 @@ public class Sim extends Constants {
    /**
     * Slight drift due to threading inaccuracy
     */
-   public static final boolean REALTIME_ENABLED = false;
+   private static final boolean REALTIME_ENABLED = false;
 
    /**
-    * TBD TODO to be implemented
+    * Determines whether to print current simulator state or just run quietly
     */
-   public static final boolean STATUS_UPDATE_ENABLED = false;
+   private static final boolean PRINT_ENABLED = true;
+
+   /**
+    * Determines after how much passed time (in s) it prints the current status of the simulation
+    */
+   private static final double PRINT_DT = 60*60*24*30;
+
+
 
    public static long timerStart;
    public static long timerEnd;
@@ -55,12 +67,17 @@ public class Sim extends Constants {
    public static void main(String[] args) throws InterruptedException {
       setup();
       for (int i = 1; i <= N ; i++) {
-         double currentTimeInSim = i * DT_S;
-         System.out.println(String.format("Result for %.2fs:", currentTimeInSim));
-         modelStep(REALTIME_ENABLED);
-         System.out.println();
+         currentTimeInSim = i * DT_S;
+         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+            System.out.println(String.format("Result for %.2fs:", currentTimeInSim));
+         modelStep();
+         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+            System.out.println();
       }
-      compareSimAndEquations();
+      // State at end of simulation
+      System.out.println(String.format("Final state at %ds:", SIM_T_S));
+      physicsObjects.forEach((obj) -> System.out.println(obj));
+      //compareSimAndEquations();
    }
 
    /**
@@ -69,8 +86,9 @@ public class Sim extends Constants {
    private static void setup() {
       // Add objects
       physicsObjects.add(EARTH);
-      physicsObjects.add(new PhysicsObject3D("Earth-like", Math.pow(10,24), new double[] {0,0,0}, new double[] {0,0,0}, new double[] {0,0,0}));
-
+      //physicsObjects.add(new PhysicsObject3D("Earth-like", Math.pow(10,24), new double[] {0,0,0}, new double[] {0,0,0}, new double[] {0,0,0}));
+      //physicsObjects.add(MOON);
+      physicsObjects.add(SUN);
       // State at begin of simulation (t = 0s)
       System.out.println("Initial setup at 0.00s:");
       physicsObjects.forEach((obj) -> System.out.println(obj));
@@ -89,7 +107,7 @@ public class Sim extends Constants {
     * Performs a single iteration simulating DT time
     * @throws InterruptedException
     */
-   private static void modelStep(boolean realtime) throws InterruptedException {
+   private static void modelStep() throws InterruptedException {
       physicsObjects.forEach((obj) -> {
          // Reset forces
          obj.a.vector = new double[3];
@@ -102,11 +120,12 @@ public class Sim extends Constants {
             obj.s.vector[i] += obj.v.vector[i] * DT_S;
             obj.v.vector[i] += obj.a.vector[i] * DT_S;
          }
-         System.out.println(obj);
+         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+            System.out.println(obj);
       });
       // Stop measuring time
       long timerEnd = System.nanoTime();
-      if (realtime) {
+      if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
             // First iteration ignores this
