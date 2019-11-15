@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * note that reducing DT reduces truncation error.
  */
 public class Sim extends Constants {
-
+ 
    /**
     *  Modelled time of Sim in s
     */
@@ -16,7 +16,7 @@ public class Sim extends Constants {
    /**
     * Delta Time (Timestep) in ms
     */
-   public static final int DT_MS = 100;
+   public static final int DT_MS = 1000;
 
    /**
     * Delta Time (Timestep) in s
@@ -57,7 +57,7 @@ public class Sim extends Constants {
    /**
     * Determines after how much passed time (in s) it prints the current status of the simulation
     */
-   private static final double PRINT_DT = 60*60*24*30;
+   private static final double PRINT_DT = SIM_T_S/48;
 
 
 
@@ -76,7 +76,14 @@ public class Sim extends Constants {
       }
       // State at end of simulation
       System.out.println(String.format("Final state at %ds:", SIM_T_S));
-      physicsObjects.forEach((obj) -> System.out.println(obj));
+      physicsObjects.forEach((obj) -> {
+         System.out.println(obj);
+         // TODO remove when nicer way implemented
+         physicsObjects.forEach((obj2) -> {
+            if (obj != obj2)
+               System.out.println(String.format("ED: %s is %.2fm away from %s.",obj.name, Vector3D.distance(obj.s, obj2.s), obj2.name));
+         });
+      });
       //compareSimAndEquations();
    }
 
@@ -86,8 +93,7 @@ public class Sim extends Constants {
    private static void setup() {
       // Add objects
       physicsObjects.add(EARTH);
-      //physicsObjects.add(new PhysicsObject3D("Earth-like", Math.pow(10,24), new double[] {0,0,0}, new double[] {0,0,0}, new double[] {0,0,0}));
-      //physicsObjects.add(MOON);
+      physicsObjects.add(MOON);
       physicsObjects.add(SUN);
       // State at begin of simulation (t = 0s)
       System.out.println("Initial setup at 0.00s:");
@@ -120,8 +126,14 @@ public class Sim extends Constants {
             obj.s.vector[i] += obj.v.vector[i] * DT_S;
             obj.v.vector[i] += obj.a.vector[i] * DT_S;
          }
-         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
+            // TODO remove when nicer way implemented
+            physicsObjects.forEach((obj2) -> {
+               if (obj != obj2)
+                  System.out.println(String.format("ED: %s is %.2fm away from %s.",obj.name, Vector3D.distance(obj.s, obj2.s), obj2.name));
+            });
+         }
       });
       // Stop measuring time
       long timerEnd = System.nanoTime();
