@@ -44,7 +44,7 @@ public class Vector3D {
    /**
     * Normalizes the given position vector (length of vector is approx. 1)
     */
-    public void normalize() {
+   public void normalize() {
       double length = length();
       for (int i = 0; i < 3; i++)
          vector[i] /= length;
@@ -54,7 +54,7 @@ public class Vector3D {
     * Determines length of a vector
     * @return length
     */
-    public double length() {
+   public double length() {
       return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
    }
 

@@ -11,15 +11,14 @@ public abstract class Constants {
    protected static final double G_CONST = 6.67430 * Math.pow(10, -11);
 
    /**
-    * gravitational acceleration on earth in m/s^2
-    */
-   protected static final double G_ACC = 9.80665;
-
-   /**
     * Astronomic Unit (average distance between Earth and Sun)
     */
    protected static final double AU = 149597870700d;
 
+   /**
+    * Speed of light in m/s
+    */
+   protected static final double C = 299792458d;
    /**
     * mass of earth in kg
     */
@@ -52,9 +51,9 @@ public abstract class Constants {
 
    /* V_MOON = s / t where
          s = moon orbit around sun + 12 * moon orbit around earth
-         t = 1 year
+         t = +/- same orbital period as earth
    */
-   protected static final double V_MOON = ((2 * Math.PI * (AU + DISTANCE_EARTH_MOON)) + (12 * 2 * Math.PI * DISTANCE_EARTH_MOON)) / (365*24*60*60);
+   protected static final double V_MOON = ((2 * Math.PI * (AU + DISTANCE_EARTH_MOON)) + (12 * 2 * Math.PI * DISTANCE_EARTH_MOON)) / ORBITAL_PERIOD_EARTH;
 
    protected static final double M_CHICXULUB = 4.6 * Math.pow(10, 17);
 

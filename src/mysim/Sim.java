@@ -5,14 +5,13 @@ import java.util.ArrayList;
 /**
  * Main class running the simulation and updates.
  * Note that reducing DT reduces truncation error.
- * Use a terminal output/editor with width 137 please to allign rows properly
  */
 public class Sim extends Constants {
  
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH*2;
+   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH;
 
    /**
     * Delta Time (Timestep) in ms
@@ -51,7 +50,7 @@ public class Sim extends Constants {
    private static final boolean REALTIME_ENABLED = false;
 
    /**
-    * Seet to true to enable state updates during the simulation process
+    * Set to true to enable state updates during the simulation process
     */
    private static final boolean PRINT_ENABLED = true;
 
@@ -59,12 +58,17 @@ public class Sim extends Constants {
     * Determines after how much passed time (in s) it prints the current state of the simulation.
     * Reducing this or setting PRINT_ENABLED = false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = SIM_T_S/200;
+   private static final double PRINT_DT = SIM_T_S/12;
 
+   /**
+    * Used for timekeeping for Thread.sleep in REALTIME mode
+    */
+   private static long timerStart;
 
-
-   public static long timerStart;
-   public static long timerEnd;
+   /**
+    * Used for timekeeping for Thread.sleep in TREALTIME mode
+    */
+   private static long timerEnd;
 
    public static void main(String[] args) throws InterruptedException {
       setup();
@@ -77,28 +81,29 @@ public class Sim extends Constants {
             System.out.println();
       }
       // State at end of simulation
-      printEndState();
+      printFinalState();
       //compareSimAndEquations();
    }
 
    /**
-    * Setup before entering simulation environment
+    * Setup before entering simulation environment. Add all simulation objects here and print initial setup of simulation. 
+    * Also keep deepcopy of initial elements to compare with formula later
     */
    private static void setup() {
       // Add objects
       physicsObjects.add(EARTH);
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
+
       // State at begin of simulation (t = 0s)
-      System.out.println("Initial setup at 0.00s:");
-      physicsObjects.forEach((obj) -> System.out.println(obj));
-      System.out.println("\n");
+      printInitialState();
+
       // Copy initial objects
       physicsObjects.forEach((obj) -> initPhysicsObjects.add(obj.clone()));
    }
 
    /**
-    * Performs a single iteration simulating DT time
+    * Performs a single iteration of the simulation simulating DT time
     * @throws InterruptedException
     */
    private static void modelStep() throws InterruptedException {
@@ -119,6 +124,8 @@ public class Sim extends Constants {
          // Print distance to other objects in the simulation
          if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
+            // Prints length of all vectors
+            System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
             // TODO remove when nicer way implemented
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
@@ -126,8 +133,10 @@ public class Sim extends Constants {
             });
          }
       });
+
       // Stop measuring time
-      long timerEnd = System.nanoTime();
+      timerEnd = System.nanoTime();
+
       if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
@@ -140,17 +149,18 @@ public class Sim extends Constants {
             return;
          }
       }
+
       // Start measuring time
       timerStart = System.nanoTime();
    }
 
    /**
-    * 
+    * Adds gravitational forces acting on this object to its a
     * @param obj
     * @return
     */
    private static void gravity(PhysicsObject3D obj) {
-      // Gravity Super Position Vector = total gravitational acceleration
+      // Gravity Super Position Vector = total gravitational acceleration for this object
       double[] gspV = new double[3];
       physicsObjects.forEach((obj2) -> {
          // If not same object and obj2 not massless
@@ -170,16 +180,32 @@ public class Sim extends Constants {
          obj.a.vector[i] += gspV[i];
    }
 
+   /**
+    * Use init and final values of objects of the simulation and use laws of motion to determine accuracy. Only possible in certain cases
+    */
    private static void compareSimAndEquations() {
-      // take and use init and final values of objects and use newtonian laws of motion to compare drift
-      System.out.println("These should be initial values.");
+      System.out.println("\n\n\nSimulation accuracy analysis:");
+      System.out.println("Initial objects:");
       initPhysicsObjects.forEach((obj) -> System.out.println(obj));
    }
 
-   private static void printEndState() {
+   private static void printInitialState() {
+      System.out.println("Progress 0% - Initial setup at 0.00s:");
+      physicsObjects.forEach((obj) -> {
+         System.out.println(obj);
+         System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
+      });
+      System.out.println("\n");
+   }
+
+   /**
+    * Prints state at the end of the simulation
+    */
+   private static void printFinalState() {
       System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
+         System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
          // TODO remove when nicer way implemented
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
