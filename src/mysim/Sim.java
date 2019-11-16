@@ -11,7 +11,7 @@ public class Sim extends Constants {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = 60*60*24*365;
+   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH*2;
 
    /**
     * Delta Time (Timestep) in ms
@@ -19,14 +19,14 @@ public class Sim extends Constants {
    public static final int DT_MS = 1000;
 
    /**
-    * Delta Time (Timestep) in s
+    * Delta Time (Timestep for modelling) in s
     */
    public static final double DT_S = ((double)DT_MS / 1000);
 
    /**
-    * Iterations of modelStep
+    * number of iterations of modelStep to complete simulation
     */
-   public static final double N = (SIM_T_S * (1 / DT_S));
+   public static final int N = (int) (SIM_T_S * (1 / DT_S));
 
    /**
     * Keeps track of current time of simulation
@@ -45,19 +45,20 @@ public class Sim extends Constants {
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
 
    /**
-    * Slight drift due to threading inaccuracy
+    * Slows simulation down to realtime
     */
    private static final boolean REALTIME_ENABLED = false;
 
    /**
-    * Determines whether to print current simulator state or just run quietly
+    * Seet to true to enable state updates during the simulation process
     */
    private static final boolean PRINT_ENABLED = true;
 
    /**
-    * Determines after how much passed time (in s) it prints the current status of the simulation
+    * Determines after how much passed time (in s) it prints the current state of the simulation.
+    * Reducing this or setting PRINT_ENABLED = false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = SIM_T_S/48;
+   private static final double PRINT_DT = SIM_T_S/200;
 
 
 
@@ -69,19 +70,19 @@ public class Sim extends Constants {
       for (int i = 1; i <= N ; i++) {
          currentTimeInSim = i * DT_S;
          if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
-            System.out.println(String.format("Result for %.2fs:", currentTimeInSim));
+            System.out.println(String.format("Progress %.0f%% - Result for %.2fs:", (double) (((long)100*i)/N), currentTimeInSim));
          modelStep();
          if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
             System.out.println();
       }
       // State at end of simulation
-      System.out.println(String.format("Final state at %ds:", SIM_T_S));
+      System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
          // TODO remove when nicer way implemented
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
-               System.out.println(String.format("ED: %s is %.2fm away from %s.",obj.name, Vector3D.distance(obj.s, obj2.s), obj2.name));
+               System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
          });
       });
       //compareSimAndEquations();
@@ -122,16 +123,19 @@ public class Sim extends Constants {
          if (obj.m != 0d)
             gravity(obj);
 
+         // Update position and velocity in space for DT
          for (int i = 0; i < 3; i++) {
             obj.s.vector[i] += obj.v.vector[i] * DT_S;
             obj.v.vector[i] += obj.a.vector[i] * DT_S;
          }
+
+         // Print distance to other objects in the simulation
          if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
             // TODO remove when nicer way implemented
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
-                  System.out.println(String.format("ED: %s is %.2fm away from %s.",obj.name, Vector3D.distance(obj.s, obj2.s), obj2.name));
+                  System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
             });
          }
       });

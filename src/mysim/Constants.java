@@ -16,7 +16,7 @@ public abstract class Constants {
    protected static final double G_ACC = 9.80665;
 
    /**
-    * Astronomic Unit
+    * Astronomic Unit (average distance between Earth and Sun)
     */
    protected static final double AU = 149597870700d;
 
@@ -35,6 +35,11 @@ public abstract class Constants {
     */
    protected static final double V_EARTH = 29780;
 
+   /**
+    * Closest approximation of orbital period around the sun
+    */
+   protected static final int ORBITAL_PERIOD_EARTH = 31558149;
+
    protected static final double M_SUN = 1.9885 * Math.pow(10,30);
 
    protected static final double R_SUN = 695700000d;
@@ -46,10 +51,10 @@ public abstract class Constants {
    protected static final double DISTANCE_EARTH_MOON = 385000000;
 
    /* V_MOON = s / t where
-         s = earth orbit around sun + 12 * moon orbit around earth
+         s = moon orbit around sun + 12 * moon orbit around earth
          t = 1 year
    */
-   protected static final double V_MOON = ((2 * Math.PI * AU) + (12 * 2 * Math.PI * DISTANCE_EARTH_MOON)) / (365*24*60*60);
+   protected static final double V_MOON = ((2 * Math.PI * (AU + DISTANCE_EARTH_MOON)) + (12 * 2 * Math.PI * DISTANCE_EARTH_MOON)) / (365*24*60*60);
 
    protected static final double M_CHICXULUB = 4.6 * Math.pow(10, 17);
 
