@@ -3,8 +3,9 @@ package mysim;
 import java.util.ArrayList;
 
 /**
- * Main class running the simulation and updates
- * note that reducing DT reduces truncation error.
+ * Main class running the simulation and updates.
+ * Note that reducing DT reduces truncation error.
+ * Use a terminal output/editor with width 137 please to allign rows properly
  */
 public class Sim extends Constants {
  
@@ -76,15 +77,7 @@ public class Sim extends Constants {
             System.out.println();
       }
       // State at end of simulation
-      System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
-      physicsObjects.forEach((obj) -> {
-         System.out.println(obj);
-         // TODO remove when nicer way implemented
-         physicsObjects.forEach((obj2) -> {
-            if (obj != obj2)
-               System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
-         });
-      });
+      printEndState();
       //compareSimAndEquations();
    }
 
@@ -99,15 +92,9 @@ public class Sim extends Constants {
       // State at begin of simulation (t = 0s)
       System.out.println("Initial setup at 0.00s:");
       physicsObjects.forEach((obj) -> System.out.println(obj));
-
+      System.out.println("\n");
       // Copy initial objects
       physicsObjects.forEach((obj) -> initPhysicsObjects.add(obj.clone()));
-   }
-
-   private static void compareSimAndEquations() {
-      // take and use init and final values of objects and use newtonian laws of motion to compare drift
-      System.out.println("These should be initial values.");
-      initPhysicsObjects.forEach((obj) -> System.out.println(obj));
    }
 
    /**
@@ -181,5 +168,23 @@ public class Sim extends Constants {
       });
       for (int i = 0; i < 3; i++)
          obj.a.vector[i] += gspV[i];
+   }
+
+   private static void compareSimAndEquations() {
+      // take and use init and final values of objects and use newtonian laws of motion to compare drift
+      System.out.println("These should be initial values.");
+      initPhysicsObjects.forEach((obj) -> System.out.println(obj));
+   }
+
+   private static void printEndState() {
+      System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
+      physicsObjects.forEach((obj) -> {
+         System.out.println(obj);
+         // TODO remove when nicer way implemented
+         physicsObjects.forEach((obj2) -> {
+            if (obj != obj2)
+               System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
+         });
+      });
    }
 }
