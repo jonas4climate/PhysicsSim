@@ -124,8 +124,6 @@ public class Sim extends Constants {
          // Print distance to other objects in the simulation
          if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
-            // Prints length of all vectors
-            System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
                   System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
@@ -192,10 +190,7 @@ public class Sim extends Constants {
 
    private static void printInitialState() {
       System.out.println("Progress 0% - Initial setup at 0.00s:");
-      physicsObjects.forEach((obj) -> {
-         System.out.println(obj);
-         System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
-      });
+      physicsObjects.forEach((obj) -> System.out.println(obj));
       System.out.println("\n");
    }
 
@@ -206,7 +201,6 @@ public class Sim extends Constants {
       System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
-         System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
                System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
