@@ -126,7 +126,6 @@ public class Sim extends Constants {
             System.out.println(obj);
             // Prints length of all vectors
             System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
-            // TODO remove when nicer way implemented
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
                   System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
@@ -161,23 +160,25 @@ public class Sim extends Constants {
     */
    private static void gravity(PhysicsObject3D obj) {
       // Gravity Super Position Vector = total gravitational acceleration for this object
-      double[] gspV = new double[3];
-      physicsObjects.forEach((obj2) -> {
-         // If not same object and obj2 not massless
-         if (obj != obj2 && obj2.m != 0d) {
-            double ED = Vector3D.distance(obj.s, obj2.s);
-            double[] dirV = Vector3D.normDirV(obj.s, obj2.s).vector.clone();
-            // Force in Newtons
-            double forceInN = (G_CONST * obj.m * obj2.m) / Math.pow(ED, 2);
-            // F = m * a <=> a = F / m
-            double acc = forceInN / obj.m;
-            for (int i = 0; i < 3; i++) {
-               gspV[i] += dirV[i] * acc;
+      if (obj.m >= 0) {
+         double[] gspV = new double[3];
+         physicsObjects.forEach((obj2) -> {
+            // If not same object and obj2 not massless
+            if (obj != obj2 && obj2.m != 0d) {
+               double ED = Vector3D.distance(obj.s, obj2.s);
+               double[] dirV = Vector3D.normDirV(obj.s, obj2.s).vector.clone();
+               // Force in Newtons
+               double forceInN = (G_CONST * obj.m * obj2.m) / Math.pow(ED, 2);
+               // F = m * a <=> a = F / m
+               double acc = forceInN / obj.m;
+               for (int i = 0; i < 3; i++) {
+                  gspV[i] += dirV[i] * acc;
+               }
             }
-         }
-      });
-      for (int i = 0; i < 3; i++)
-         obj.a.vector[i] += gspV[i];
+         });
+         for (int i = 0; i < 3; i++)
+            obj.a.vector[i] += gspV[i];
+      }
    }
 
    /**
@@ -206,7 +207,6 @@ public class Sim extends Constants {
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
          System.out.println(String.format("            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e", obj.s.length(), obj.v.length(), obj.a.length()));
-         // TODO remove when nicer way implemented
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
                System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
