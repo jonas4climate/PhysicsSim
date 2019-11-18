@@ -11,7 +11,7 @@ public class Sim extends Constants {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH;
+   public static final int SIM_T_S = (int) ORBITAL_PERIOD_EARTH;
 
    /**
     * Delta Time (Timestep) in ms
@@ -58,7 +58,7 @@ public class Sim extends Constants {
     * Determines after how much passed time (in s) it prints the current state of the simulation.
     * Reducing this or setting PRINT_ENABLED = false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = SIM_T_S/12;
+   private static final double PRINT_DT = SIM_T_S/(12);
 
    /**
     * Used for timekeeping for Thread.sleep in REALTIME mode
@@ -126,7 +126,7 @@ public class Sim extends Constants {
             System.out.println(obj);
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
-                  System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
+                  System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
             });
          }
       });
@@ -203,7 +203,7 @@ public class Sim extends Constants {
          System.out.println(obj);
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
-               System.out.println(String.format("            %.2fm away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
+               System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
          });
       });
    }

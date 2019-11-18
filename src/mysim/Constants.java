@@ -22,7 +22,7 @@ public abstract class Constants {
    /**
     * mass of earth in kg
     */
-   protected static final double M_EARTH = 5.9736 * Math.pow(10, 24);
+   protected static final double M_EARTH = 5.9722 * Math.pow(10, 24);
 
    /**
     * radius of earth at equator in m
@@ -37,17 +37,17 @@ public abstract class Constants {
    /**
     * Closest approximation of orbital period around the sun
     */
-   protected static final int ORBITAL_PERIOD_EARTH = 31558149;
+   protected static final int ORBITAL_PERIOD_EARTH = 31558150; // behind by 6 1/2 hours in current simulation due to unknown reason (not based on drift or truncation error)
 
-   protected static final double M_SUN = 1.9885 * Math.pow(10,30);
+   protected static final double M_SUN = 1.98847 * Math.pow(10,30);
 
    protected static final double R_SUN = 695700000d;
 
-   protected static final double M_MOON = 7.34767309 * Math.pow(10, 22);
+   protected static final double M_MOON = 7.246 * Math.pow(10,22);
 
    protected static final double R_MOON = 1737500;
 
-   protected static final double DISTANCE_EARTH_MOON = 385000000;
+   protected static final double DISTANCE_EARTH_MOON = 384400000;
 
    /* V_MOON = s / t where
          s = moon orbit around sun + 12 * moon orbit around earth
