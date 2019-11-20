@@ -12,7 +12,6 @@ public class Sim extends Constants {
     *  Modelled time of Sim in s
     */
    public static final int SIM_T_S = (int) ORBITAL_PERIOD_EARTH;
-
    /**
     * Delta Time (Timestep) in ms
     */
@@ -71,6 +70,7 @@ public class Sim extends Constants {
    private static long timerEnd;
 
    public static void main(String[] args) throws InterruptedException {
+      // behind by 6 1/2 hours (700.000km) in 1 year EARTH-MOON-SUN simulation due to unknown reason (not based on drift or truncation error)
       setup();
       for (int i = 1; i <= N ; i++) {
          currentTimeInSim = i * DT_S;
@@ -94,6 +94,7 @@ public class Sim extends Constants {
       physicsObjects.add(EARTH);
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
+      //physicsObjects.add(CHICXULUB);
 
       // State at begin of simulation (t = 0s)
       printInitialState();
@@ -153,6 +154,7 @@ public class Sim extends Constants {
 
    /**
     * Adds gravitational forces acting on this object to its a
+    * TODO initially contained primitive collision detection (only applies if two objects occupy exact same spot in space)
     * @param obj
     * @return
     */

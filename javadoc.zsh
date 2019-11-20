@@ -1,2 +1,2 @@
 #!/bin/zsh
-javadoc src/mysim/* -d docs
+javadoc src/mysim/* -d javadocs

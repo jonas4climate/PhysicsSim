@@ -37,7 +37,7 @@ public abstract class Constants {
    /**
     * Closest approximation of orbital period around the sun
     */
-   protected static final int ORBITAL_PERIOD_EARTH = 31558150; // behind by 6 1/2 hours in current simulation due to unknown reason (not based on drift or truncation error)
+   protected static final int ORBITAL_PERIOD_EARTH = 31558150;
 
    protected static final double M_SUN = 1.98847 * Math.pow(10,30);
 
@@ -77,6 +77,6 @@ public abstract class Constants {
    /**
     * Asteroid "Chicxulub incubator" that was supposingly hitting earth and lead to extinction of vast majority of dinosaurs
     */
-   protected static PhysicsObject3D CHICXULUB = new PhysicsObject3D("Chicxulub", M_CHICXULUB, new double[]{0,0,1000000});
+   protected static PhysicsObject3D CHICXULUB = new PhysicsObject3D("Chicxulub", M_CHICXULUB, new double[]{AU,0,0});
 
 }
