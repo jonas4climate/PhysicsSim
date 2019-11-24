@@ -11,7 +11,7 @@ public class Sim extends Constants {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = (int) ORBITAL_PERIOD_EARTH;
+   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH;
    /**
     * Delta Time (Timestep) in ms
     */
@@ -51,11 +51,11 @@ public class Sim extends Constants {
    /**
     * Set to true to enable state updates during the simulation process
     */
-   private static final boolean PRINT_ENABLED = true;
+   private static final boolean PRINT_VERBOSE = true;
 
    /**
     * Determines after how much passed time (in s) it prints the current state of the simulation.
-    * Reducing this or setting PRINT_ENABLED = false greatly increases simulation speed.
+    * Increeasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
     */
    private static final double PRINT_DT = SIM_T_S/(12);
 
@@ -72,15 +72,18 @@ public class Sim extends Constants {
    public static void main(String[] args) throws InterruptedException {
       // behind by 6 1/2 hours (700.000km) in 1 year EARTH-MOON-SUN simulation due to unknown reason (not based on drift or truncation error)
       setup();
+
       for (int i = 1; i <= N ; i++) {
          currentTimeInSim = i * DT_S;
-         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+
+         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0)
             System.out.println(String.format("Progress %.0f%% - Result for %.2fs:", (double) (((long)100*i)/N), currentTimeInSim));
+            
          modelStep();
-         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0)
+
+         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0)
             System.out.println();
       }
-      // State at end of simulation
       printFinalState();
       //compareSimAndEquations();
    }
@@ -123,7 +126,7 @@ public class Sim extends Constants {
          }
 
          // Print distance to other objects in the simulation
-         if (PRINT_ENABLED && currentTimeInSim % PRINT_DT == 0) {
+         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
@@ -135,6 +138,7 @@ public class Sim extends Constants {
       // Stop measuring time
       timerEnd = System.nanoTime();
 
+      // If realtime mode
       if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
@@ -186,8 +190,12 @@ public class Sim extends Constants {
     */
    private static void compareSimAndEquations() {
       System.out.println("\n\n\nSimulation accuracy analysis:");
-      System.out.println("Initial objects:");
+      System.out.println("\nInitial objects:");
       initPhysicsObjects.forEach((obj) -> System.out.println(obj));
+      System.out.println("\nFinal objects:");
+      physicsObjects.forEach((obj) -> System.out.println(obj));
+      System.out.println("\nInaccuracy:");
+      // ?
    }
 
    private static void printInitialState() {
