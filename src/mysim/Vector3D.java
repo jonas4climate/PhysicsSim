@@ -35,6 +35,11 @@ public class Vector3D {
       return Math.sqrt(Math.pow(v1.vector[0] - v2.vector[0], 2) + Math.pow(v1.vector[1] - v2.vector[1], 2) + Math.pow(v1.vector[2] - v2.vector[2], 2));
    }
 
+   /**
+    * Normalized direction vector from v1 to v2
+    * @param v1 origin
+    * @param v2 vector
+    */
    public static Vector3D normDirV(Vector3D v1, Vector3D v2) {
       Vector3D result = new Vector3D(new double[] {v2.vector[0] - v1.vector[0], v2.vector[1] - v1.vector[1], v2.vector[2] - v1.vector[2]});
       result.normalize();

@@ -3,7 +3,7 @@ package mysim;
 /**
  * Helper class to set any physical constants used by the Simulator
  */
-public abstract class Constants {
+abstract class Util {
 
    /**
     * Gravitational constant
@@ -62,21 +62,21 @@ public abstract class Constants {
    /**
     * Sun model
     */
-   protected static PhysicsObject3D SUN = new PhysicsObject3D("Sun", M_SUN, new double[]{0,0,0});
+   protected static PhysicsObject3D SUN = new PhysicsObject3D("Sun", M_SUN, R_SUN, new double[]{0,0,0});
 
    /**
     * Earth model
     */
-   protected static PhysicsObject3D EARTH = new PhysicsObject3D("Earth", M_EARTH, new double[]{AU,0,0}, new double[]{0,V_EARTH,0});
+   protected static PhysicsObject3D EARTH = new PhysicsObject3D("Earth", M_EARTH, R_EARTH, new double[]{AU,0,0}, new double[]{0,V_EARTH,0});
 
    /**
     * Moon model
     */
-   protected static PhysicsObject3D MOON = new PhysicsObject3D("Moon", M_MOON, new double[]{AU + DISTANCE_EARTH_MOON,0,0}, new double[]{0,V_MOON,0});
+   protected static PhysicsObject3D MOON = new PhysicsObject3D("Moon", M_MOON, R_MOON, new double[]{AU + DISTANCE_EARTH_MOON,0,0}, new double[]{0,V_MOON,0});
 
    /**
     * Asteroid "Chicxulub incubator" that was supposingly hitting earth and lead to extinction of vast majority of dinosaurs
     */
-   protected static PhysicsObject3D CHICXULUB = new PhysicsObject3D("Chicxulub", M_CHICXULUB, new double[]{AU,0,0});
+   protected static PhysicsObject3D CHICXULUB = new PhysicsObject3D("Chicxulub", M_CHICXULUB, R_CHICXULUB, new double[]{AU,0,0});
 
 }

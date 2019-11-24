@@ -6,8 +6,11 @@ import java.util.ArrayList;
  * Main class running the simulation and updates.
  * Note that reducing DT reduces truncation error.
  */
-public class Sim extends Constants {
+public class Sim extends Util {
  
+
+   /******************** TIME ********************/
+
    /**
     *  Modelled time of Sim in s
     */
@@ -32,6 +35,10 @@ public class Sim extends Constants {
     */
    private static double currentTimeInSim = 0d;
 
+   
+
+   /******************** SIMULATION OBJECTS ********************/
+
    /**
     * List containing all currently existing objects in the Sim
     */
@@ -42,6 +49,10 @@ public class Sim extends Constants {
     * compare final results using realtime value comparison with equational truths
     */
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
+
+
+
+   /******************** MODES ********************/
 
    /**
     * Slows simulation down to realtime
@@ -59,6 +70,10 @@ public class Sim extends Constants {
     */
    private static final double PRINT_DT = SIM_T_S/(12);
 
+
+
+   /******************** UTIL ********************/
+
    /**
     * Used for timekeeping for Thread.sleep in REALTIME mode
     */
@@ -68,6 +83,8 @@ public class Sim extends Constants {
     * Used for timekeeping for Thread.sleep in TREALTIME mode
     */
    private static long timerEnd;
+
+
 
    public static void main(String[] args) throws InterruptedException {
       // behind by 6 1/2 hours (700.000km) in 1 year EARTH-MOON-SUN simulation due to unknown reason (not based on drift or truncation error)
@@ -90,7 +107,7 @@ public class Sim extends Constants {
 
    /**
     * Setup before entering simulation environment. Add all simulation objects here and print initial setup of simulation. 
-    * Also keep deepcopy of initial elements to compare with formula later
+    * Also keep deepcopy of initial elements if you want to compare final values with it later
     */
    private static void setup() {
       // Add objects
@@ -112,20 +129,28 @@ public class Sim extends Constants {
     */
    private static void modelStep() throws InterruptedException {
       physicsObjects.forEach((obj) -> {
-         // Reset forces
+         // reset forces
          obj.a.vector = new double[3];
 
          // apply gravitational forces to the object if obj not massless
          if (obj.m != 0d)
             gravity(obj);
 
-         // Update position and velocity in space for DT
+         // collision check
+         physicsObjects.forEach((obj2) -> {
+            if (primitiveCollisionCheck(obj,obj2)) {
+               // TODO What to do here?
+               System.out.println(String.format("\n\n----------------\nCollision of %s and %s.\n----------------\n", obj.name, obj2.name));
+            }
+         });
+
+         // update position and velocity in space for DT
          for (int i = 0; i < 3; i++) {
             obj.s.vector[i] += obj.v.vector[i] * DT_S;
             obj.v.vector[i] += obj.a.vector[i] * DT_S;
          }
 
-         // Print distance to other objects in the simulation
+         // print distance to other objects in the simulation
          if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
             System.out.println(obj);
             physicsObjects.forEach((obj2) -> {
@@ -183,6 +208,12 @@ public class Sim extends Constants {
          for (int i = 0; i < 3; i++)
             obj.a.vector[i] += gspV[i];
       }
+   }
+
+   private static boolean primitiveCollisionCheck(PhysicsObject3D obj, PhysicsObject3D obj2) {
+      if (Vector3D.distance(obj.s, obj2.s) < obj.r + obj2.r)
+         return true;
+      return false;
    }
 
    /**
