@@ -3,7 +3,7 @@ package mysim;
 /**
  * Class to model 3D vectors and their operations for information such as s, v, a.
  */
-public class Vector3D {
+public class Vector3D implements Cloneable {
 
    /**
     * 3D Vector
@@ -25,13 +25,17 @@ public class Vector3D {
       this.vector = vector;
    }
 
+   public Vector3D(double a, double b, double c) {
+      this.vector = new double[] {a,b,c};
+   }
+
    /**
     * Calculates distance between two vectors in 3D space. Order of vectors irrelevant.
     * @param v1 first vector
     * @param v2 second vector
     * @return distance
     */
-    public static double distance(Vector3D v1, Vector3D v2) {
+   public static double distance(Vector3D v1, Vector3D v2) {
       return Math.sqrt(Math.pow(v1.vector[0] - v2.vector[0], 2) + Math.pow(v1.vector[1] - v2.vector[1], 2) + Math.pow(v1.vector[2] - v2.vector[2], 2));
    }
 
@@ -39,11 +43,28 @@ public class Vector3D {
     * Normalized direction vector from v1 to v2
     * @param v1 origin
     * @param v2 vector
+    * @return normalized direction vector
     */
    public static Vector3D normDirV(Vector3D v1, Vector3D v2) {
       Vector3D result = new Vector3D(new double[] {v2.vector[0] - v1.vector[0], v2.vector[1] - v1.vector[1], v2.vector[2] - v1.vector[2]});
       result.normalize();
       return result;
+   }
+
+   /**
+    * Substract vector 1 from vector 2
+    * @param v1 vector 
+    * @param v2 vector
+    * @return substracted new vector
+    */
+   public static Vector3D substract(Vector3D v1, Vector3D v2) {
+      return new Vector3D(new double[] {v1.vector[0] - v2.vector[0], v1.vector[1] - v2.vector[1], v1.vector[2] - v2.vector[2]});
+   }
+
+   public void scale(double scalar) {
+      vector[0] *= scalar;
+      vector[1] *= scalar;
+      vector[2] *= scalar;
    }
 
    /**
@@ -55,6 +76,10 @@ public class Vector3D {
          vector[i] /= length;
    }
 
+   public static Vector3D add(Vector3D v1, Vector3D v2) {
+      return new Vector3D(new double[]{v1.vector[0]+v2.vector[0],v1.vector[1]+v2.vector[1],v1.vector[2]+v2.vector[2]});
+   }
+
    /**
     * Determines length of a vector
     * @return length
@@ -62,7 +87,6 @@ public class Vector3D {
    public double length() {
       return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
    }
-
 
    /**
     * Reset vector with new values and array object
@@ -73,5 +97,10 @@ public class Vector3D {
       for (int i = 0; i < 3; i++)
          newVector[i] = v[i];
       vector = newVector;
+   }
+
+   @Override
+   public Vector3D clone() {
+      return new Vector3D(new double[]{vector[0],vector[1],vector[2]});
    }
 }

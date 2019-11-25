@@ -114,8 +114,7 @@ public class Sim extends Util {
       physicsObjects.add(EARTH);
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
-      //physicsObjects.add(CHICXULUB);
-
+      physicsObjects.add(CHICXULUB);
       // State at begin of simulation (t = 0s)
       printInitialState();
 
@@ -133,16 +132,11 @@ public class Sim extends Util {
          obj.a.vector = new double[3];
 
          // apply gravitational forces to the object if obj not massless
-         if (obj.m != 0d)
+         if (obj.m > 0d)
             gravity(obj);
 
-         // collision check
-         physicsObjects.forEach((obj2) -> {
-            if (primitiveCollisionCheck(obj,obj2)) {
-               // TODO What to do here?
-               System.out.println(String.format("\n\n----------------\nCollision of %s and %s.\n----------------\n", obj.name, obj2.name));
-            }
-         });
+         // collision check with all objects
+         handleCollisions(obj);
 
          // update position and velocity in space for DT
          for (int i = 0; i < 3; i++) {
@@ -183,7 +177,6 @@ public class Sim extends Util {
 
    /**
     * Adds gravitational forces acting on this object to its a
-    * TODO initially contained primitive collision detection (only applies if two objects occupy exact same spot in space)
     * @param obj
     * @return
     */
@@ -210,10 +203,61 @@ public class Sim extends Util {
       }
    }
 
+   /**
+    * Simple first way of checking if two objects collide
+    */
    private static boolean primitiveCollisionCheck(PhysicsObject3D obj, PhysicsObject3D obj2) {
-      if (Vector3D.distance(obj.s, obj2.s) < obj.r + obj2.r)
+      double collisionDistance = obj.r + obj2.r;
+      double distance = Vector3D.distance(obj.s, obj2.s);
+      if (distance < collisionDistance) {
          return true;
+      }
       return false;
+   }
+
+   private static void handleCollisions(PhysicsObject3D obj) {
+      physicsObjects.forEach((obj2) -> {
+         if (obj != obj2 && primitiveCollisionCheck(obj,obj2)) {
+            // For new_m
+            double new_m = obj.m + obj2.m;
+
+
+            // For new_r
+            double totalVol = obj.getVolume() + obj2.getVolume();
+            double new_r = Math.sqrt(totalVol/((4/3)*Math.PI));
+
+
+            // For new_s
+            Vector3D helper_distance_vector = Vector3D.substract(obj2.s, obj.s);
+            helper_distance_vector.scale(0.5);
+
+            Vector3D new_s = Vector3D.add(obj.s, helper_distance_vector);
+
+
+            // For new_v
+            double obj_Ekin = obj.getKineticEnergy();
+            double obj2_Ekin = obj2.getKineticEnergy();
+            double totalKin = obj_Ekin + obj2_Ekin;
+            // Scale vectors relative to the their total kinetic energy
+            Vector3D obj_v = obj.v.clone();
+            obj_v.scale(obj_Ekin/totalKin);
+            Vector3D obj2_v = obj2.v.clone();
+            obj2_v.scale(obj2_Ekin/totalKin);
+         
+            Vector3D new_v = Vector3D.add(obj_v, obj2_v);
+
+
+            PhysicsObject3D collisionObj = new PhysicsObject3D(new_r, new_m, new_s.vector, new_v.vector);
+
+            physicsObjects.add(collisionObj);
+            physicsObjects.remove(obj);
+            physicsObjects.remove(obj2);
+            // TODO use list for to-add and to-remove objects and apply after iteration over physicsobjects list
+
+            System.out.println(String.format("\n\n----------------------\nCollision of %s and %s created %s\n----------------------\n", obj.name, obj2.name, collisionObj.name));
+            System.out.println(collisionObj + "\n");
+         }
+      });
    }
 
    /**

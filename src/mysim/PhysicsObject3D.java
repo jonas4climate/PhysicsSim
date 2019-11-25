@@ -29,7 +29,7 @@ public class PhysicsObject3D implements Cloneable {
    public double r;
 
    /**
-    * position in m in format [x,y,z] to relative (0|0|0)
+    * position in m in format [x,y,z] to  (0|0|0)
     */
    public Vector3D s = new Vector3D();
 
@@ -39,22 +39,16 @@ public class PhysicsObject3D implements Cloneable {
    public Vector3D v = new Vector3D();
 
    /**
-    * acceleration in m/s^2 in format [x,z,y]
+    * acceleration due to all applied forces in m/s^2 in format [x,z,y]
     */
    public Vector3D a = new Vector3D();
 
    /**
-    * Most basic constructor
-    */
-   public PhysicsObject3D() {
-      ID++;
-   }
-
-   /**
-    * Constructor ignoring initial velocity
+    * 
     * @param name name
-    * @param m    mass
-    * @param s    initial position
+    * @param r radius
+    * @param m mass
+    * @param s position
     */
    public PhysicsObject3D(String name, double r, double m, double[] s) {
       this.name = name;
@@ -64,11 +58,12 @@ public class PhysicsObject3D implements Cloneable {
    }
 
    /**
-    * More advanced constructor allowing to declare velocity
+    * 
     * @param name name
-    * @param mass mass
-    * @param s initial position
-    * @param v initial velocity
+    * @param r radius
+    * @param m mass
+    * @param s position
+    * @param v velocity
     */
    public PhysicsObject3D(String name, double r, double m, double[] s, double[] v) {
       this.name = name;
@@ -79,24 +74,37 @@ public class PhysicsObject3D implements Cloneable {
    }
 
    /**
-    * Advanced constructor to customize all variables but name
     * 
     * @param m mass
+    * @param r radius
     * @param s position
     * @param v velocity
     */
-   public PhysicsObject3D(double m, double r, double[] s, double[] v, double[] a) {
+   public PhysicsObject3D(double r, double m, double[] s, double[] v) {
       name = ID.toString();
-      ID++;
       this.r = r;
       this.m = m;
       this.s.setVector(s);
       this.v.setVector(v);
+      ID++;
+   }
+
+   public double getVolume() {
+      return (4/3) * Math.PI * Math.pow(r,2);
    }
 
    /**
-    * Compact toString containing all relevant information
+    * Get current kinetic energy of the object
+    * @return kinetic energy
     */
+   public double getKineticEnergy() {
+      return 0.5 * m * Math.pow(v.length(),2);
+   }
+
+   public double getDensity() {
+      return getVolume()/m;
+   }
+   
    @Override
    public String toString() {
       return String.format("%10s: m=%6.3e, r=%6.3e, s=[%+6.2e,%+6.2e,%+6.2e], v=[%+6.2e,%+6.2e,%+6.2e], a=[%+6.2e,%+6.2e,%+6.2e]\n            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e",
@@ -104,10 +112,10 @@ public class PhysicsObject3D implements Cloneable {
    }
 
    /**
-    * deep-copy clone
+    * Deep copy clone
     */
    @Override
    public PhysicsObject3D clone() {
-      return new PhysicsObject3D(new String(name), m, r, s.vector.clone(), v.vector.clone());
+      return new PhysicsObject3D(new String(name), r, m, s.vector.clone(), v.vector.clone());
    }
 }
