@@ -1,6 +1,7 @@
 package mysim;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * Main class running the simulation and updates.
@@ -84,6 +85,16 @@ public class Sim extends Util {
     */
    private static long timerEnd;
 
+   /**
+    * Contains all objects that are supposed to be removed after lambda-looping over all objects. (Currently all objects colliding)
+    */
+   private static Stack<PhysicsObject3D> objToRemove = new Stack<PhysicsObject3D>();
+
+   /**
+    * Contains all objects that are supposed to be added after lambda-looping over all objects. (Currently all objects created after collision)
+    */
+   private static Stack<PhysicsObject3D> objToAdd = new Stack<PhysicsObject3D>();
+
 
 
    public static void main(String[] args) throws InterruptedException {
@@ -115,6 +126,7 @@ public class Sim extends Util {
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
       physicsObjects.add(CHICXULUB);
+
       // State at begin of simulation (t = 0s)
       printInitialState();
 
@@ -135,8 +147,11 @@ public class Sim extends Util {
          if (obj.m > 0d)
             gravity(obj);
 
-         // collision check with all objects
-         handleCollisions(obj);
+         // collision detection
+         physicsObjects.forEach((obj2) -> {
+            if (obj != obj2 && primitiveCollisionCheck(obj, obj2) && !(objToRemove.contains(obj) || objToRemove.contains(obj2)))
+               handleCollisions(obj, obj2);
+         });
 
          // update position and velocity in space for DT
          for (int i = 0; i < 3; i++) {
@@ -154,10 +169,26 @@ public class Sim extends Util {
          }
       });
 
+      // Remove collided objects
+      while (objToRemove.size() > 0) {
+         if (physicsObjects.contains(objToRemove.peek())) {
+            PhysicsObject3D collidedObj = objToRemove.pop();
+            physicsObjects.remove(collidedObj);
+         } else
+            throw new IllegalStateException("Tried to remove an object that didn't exist but should have.");
+      }
+
+      // Add new objects created by collisions (merged from two colliding objects)
+      while (objToAdd.size() > 0) {
+         PhysicsObject3D collisionObj = objToAdd.pop();
+         physicsObjects.add(collisionObj);
+      }
+
+
       // Stop measuring time
       timerEnd = System.nanoTime();
 
-      // If realtime mode
+      // Adjust timing with Tread.sleep
       if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
@@ -215,49 +246,43 @@ public class Sim extends Util {
       return false;
    }
 
-   private static void handleCollisions(PhysicsObject3D obj) {
-      physicsObjects.forEach((obj2) -> {
-         if (obj != obj2 && primitiveCollisionCheck(obj,obj2)) {
-            // For new_m
-            double new_m = obj.m + obj2.m;
+   private static void handleCollisions(PhysicsObject3D obj, PhysicsObject3D obj2) {
+      // For new_m
+      double new_m = obj.m + obj2.m;
 
 
-            // For new_r
-            double totalVol = obj.getVolume() + obj2.getVolume();
-            double new_r = Math.sqrt(totalVol/((4/3)*Math.PI));
+      // For new_r
+      double totalVol = obj.getVolume() + obj2.getVolume();
+      double new_r = Math.sqrt(totalVol/((4/3)*Math.PI));
 
 
-            // For new_s
-            Vector3D helper_distance_vector = Vector3D.substract(obj2.s, obj.s);
-            helper_distance_vector.scale(0.5);
+      // For new_s
+      Vector3D helper_distance_vector = Vector3D.substract(obj2.s, obj.s);
+      helper_distance_vector.scale(0.5);
 
-            Vector3D new_s = Vector3D.add(obj.s, helper_distance_vector);
-
-
-            // For new_v
-            double obj_Ekin = obj.getKineticEnergy();
-            double obj2_Ekin = obj2.getKineticEnergy();
-            double totalKin = obj_Ekin + obj2_Ekin;
-            // Scale vectors relative to the their total kinetic energy
-            Vector3D obj_v = obj.v.clone();
-            obj_v.scale(obj_Ekin/totalKin);
-            Vector3D obj2_v = obj2.v.clone();
-            obj2_v.scale(obj2_Ekin/totalKin);
-         
-            Vector3D new_v = Vector3D.add(obj_v, obj2_v);
+      Vector3D new_s = Vector3D.add(obj.s, helper_distance_vector);
 
 
-            PhysicsObject3D collisionObj = new PhysicsObject3D(new_r, new_m, new_s.vector, new_v.vector);
+      // For new_v
+      double obj_Ekin = obj.getKineticEnergy();
+      double obj2_Ekin = obj2.getKineticEnergy();
+      double totalKin = obj_Ekin + obj2_Ekin;
+      // Scale vectors relative to the their total kinetic energy
+      Vector3D obj_v = obj.v.clone();
+      obj_v.scale(obj_Ekin/totalKin);
+      Vector3D obj2_v = obj2.v.clone();
+      obj2_v.scale(obj2_Ekin/totalKin);
+   
+      Vector3D new_v = Vector3D.add(obj_v, obj2_v);
 
-            physicsObjects.add(collisionObj);
-            physicsObjects.remove(obj);
-            physicsObjects.remove(obj2);
-            // TODO use list for to-add and to-remove objects and apply after iteration over physicsobjects list
 
-            System.out.println(String.format("\n\n----------------------\nCollision of %s and %s created %s\n----------------------\n", obj.name, obj2.name, collisionObj.name));
-            System.out.println(collisionObj + "\n");
-         }
-      });
+      PhysicsObject3D collisionObj = new PhysicsObject3D(new_r, new_m, new_s.vector, new_v.vector);
+
+      objToAdd.add(collisionObj);
+      objToRemove.add(obj);
+      objToRemove.add(obj2);
+
+      System.out.println(String.format("\n\n----------------------\nCollision of %s and %s occured\n----------------------\n", obj.name, obj2.name));
    }
 
    /**
