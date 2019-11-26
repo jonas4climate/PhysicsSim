@@ -298,10 +298,10 @@ public class Sim extends Util {
       objToRemove.add(obj2);
 
       if (PRINT_VERBOSE) {
-         System.out.println("\n------------------------------");
+         System.out.println("\n-----------------------------------------");
          System.out.println(String.format("Progress %.0f%% - Event occured at %.2fs:", (double) (((long)100*(currentTimeInSim/DT_S))/N), currentTimeInSim));
          System.out.println(String.format("\nCollision of %s and %s occured. Objects merged into new object %s\n\n%s", obj.name, obj2.name, collisionObj.name, collisionObj));
-         System.out.println("------------------------------\n");
+         System.out.println("-----------------------------------------\n");
       }
    }
 
