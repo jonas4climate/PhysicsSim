@@ -15,11 +15,11 @@ public class Sim extends Util {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH;
+   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH/12;
    /**
     * Delta Time (Timestep) in ms
     */
-   public static final int DT_MS = 1000;
+   public static final int DT_MS = 100;
 
    /**
     * Delta Time (Timestep for modelling) in s
@@ -61,7 +61,7 @@ public class Sim extends Util {
    private static final boolean REALTIME_ENABLED = false;
 
    /**
-    * Set to true to enable state updates during the simulation process
+    * Set to true to enable state updates during the simulation process. TODO implement class with more precise flags for customizing output and change to logging
     */
    private static final boolean PRINT_VERBOSE = true;
 
@@ -69,7 +69,7 @@ public class Sim extends Util {
     * Determines after how much passed time (in s) it prints the current state of the simulation.
     * Increeasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = SIM_T_S/(12);
+   private static final double PRINT_DT = SIM_T_S/30;
 
 
 
@@ -98,14 +98,18 @@ public class Sim extends Util {
 
 
    public static void main(String[] args) throws InterruptedException {
-      // behind by 6 1/2 hours (700.000km) in 1 year EARTH-MOON-SUN simulation due to unknown reason (not based on drift or truncation error)
+      // Current model simulates solar system but with one huge unusual object to display and test new collision feature
+
+      // create space with objects
       setup();
 
       for (int i = 1; i <= N ; i++) {
          currentTimeInSim = i * DT_S;
 
-         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0)
-            System.out.println(String.format("Progress %.0f%% - Result for %.2fs:", (double) (((long)100*i)/N), currentTimeInSim));
+         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
+            System.out.println(String.format("\nProgress %.0f%% - Result for %.2fs:", (double) (((long)100*i)/N), currentTimeInSim));
+            System.out.println("-------------------------------------");
+         }
             
          modelStep();
 
@@ -125,7 +129,7 @@ public class Sim extends Util {
       physicsObjects.add(EARTH);
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
-      physicsObjects.add(CHICXULUB);
+      physicsObjects.add(new PhysicsObject3D("Huge mass", R_SUN * 10, M_SUN * 100, new double[]{AU,0,AU}));
 
       // State at begin of simulation (t = 0s)
       printInitialState();
@@ -135,8 +139,9 @@ public class Sim extends Util {
    }
 
    /**
-    * Performs a single iteration of the simulation simulating DT time
-    * @throws InterruptedException
+    * Performs a single iteration of the simulation simulating DT time. 
+    * Applies gravity and moves objects, checks and handles collisions
+    * @throws InterruptedException exception in case the Thread for realtime mode gets interrupted
     */
    private static void modelStep() throws InterruptedException {
       physicsObjects.forEach((obj) -> {
@@ -166,6 +171,7 @@ public class Sim extends Util {
                if (obj != obj2)
                   System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
             });
+            System.out.println();
          }
       });
 
@@ -208,8 +214,7 @@ public class Sim extends Util {
 
    /**
     * Adds gravitational forces acting on this object to its a
-    * @param obj
-    * @return
+    * @param obj object that is being gravitationally pulled by other object's mass
     */
    private static void gravity(PhysicsObject3D obj) {
       // Gravity Super Position Vector = total gravitational acceleration for this object
@@ -234,8 +239,12 @@ public class Sim extends Util {
       }
    }
 
+
    /**
-    * Simple first way of checking if two objects collide
+    * Simple first way of checking if two objects collide. Assumes all objects are spheres and checks if any two objects are closer than their added radii
+    * @param obj potentially colliding object
+    * @param obj2 potentially colliding object
+    * @return true if they collide
     */
    private static boolean primitiveCollisionCheck(PhysicsObject3D obj, PhysicsObject3D obj2) {
       double collisionDistance = obj.r + obj2.r;
@@ -246,6 +255,12 @@ public class Sim extends Util {
       return false;
    }
 
+   /**
+    * Handles collision occurences of given objects by removing them and adding an object that represents the objects in a merged state. 
+    * Its new properties are physically accurately calculated based of collision information and object information of the colliding objects.
+    * @param obj colliding object
+    * @param obj2 colliding object
+    */
    private static void handleCollisions(PhysicsObject3D obj, PhysicsObject3D obj2) {
       // For new_m
       double new_m = obj.m + obj2.m;
@@ -282,25 +297,30 @@ public class Sim extends Util {
       objToRemove.add(obj);
       objToRemove.add(obj2);
 
-      System.out.println(String.format("\n\n----------------------\nCollision of %s and %s occured\n----------------------\n", obj.name, obj2.name));
-   }
-
-   /**
-    * Use init and final values of objects of the simulation and use laws of motion to determine accuracy. Only possible in certain cases
-    */
-   private static void compareSimAndEquations() {
-      System.out.println("\n\n\nSimulation accuracy analysis:");
-      System.out.println("\nInitial objects:");
-      initPhysicsObjects.forEach((obj) -> System.out.println(obj));
-      System.out.println("\nFinal objects:");
-      physicsObjects.forEach((obj) -> System.out.println(obj));
-      System.out.println("\nInaccuracy:");
-      // ?
+      if (PRINT_VERBOSE) {
+         System.out.println("\n------------------------------");
+         System.out.println(String.format("Progress %.0f%% - Event occured at %.2fs:", (double) (((long)100*(currentTimeInSim/DT_S))/N), currentTimeInSim));
+         System.out.println(String.format("\nCollision of %s and %s occured. Objects merged into new object %s\n\n%s", obj.name, obj2.name, collisionObj.name, collisionObj));
+         System.out.println("------------------------------\n");
+      }
    }
 
    private static void printInitialState() {
-      System.out.println("Progress 0% - Initial setup at 0.00s:");
-      physicsObjects.forEach((obj) -> System.out.println(obj));
+      System.out.println("\nSimulator settings for simulation:");
+      System.out.println("----------------------------------");
+      System.out.println(String.format("Simulated time = %dd %dh %dm %ds \nSimulation steps (precision) = %.3fs \nREALTIME_ENABLED = %b \nPRINT_VERBOSE = %b",
+       SIM_T_S / 86400, SIM_T_S % 86400 / 3600, SIM_T_S % 3600 / 60, SIM_T_S % 60, // time of sim in d h m s
+       DT_S, REALTIME_ENABLED, PRINT_VERBOSE));
+      System.out.println("\n\nObjects in the simulation:");
+      System.out.println("--------------------------");
+      physicsObjects.forEach((obj) -> {
+         System.out.println(obj);
+         physicsObjects.forEach((obj2) -> {
+            if (obj != obj2)
+               System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
+         });
+         System.out.println();
+      });
       System.out.println("\n");
    }
 
@@ -308,13 +328,17 @@ public class Sim extends Util {
     * Prints state at the end of the simulation
     */
    private static void printFinalState() {
+      System.out.println("SIMULATION COMPLETED.\n");
+      //System.out.println(String.format("Runtime = %ds"),runtime); //TODO add runtime
       System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
+      System.out.println("-------------------------------------");
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
          physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
                System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
          });
+         System.out.println();
       });
    }
 }

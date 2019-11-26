@@ -107,7 +107,7 @@ public class PhysicsObject3D implements Cloneable {
    
    @Override
    public String toString() {
-      return String.format("%10s: m=%6.3e, r=%6.3e, s=[%+6.2e,%+6.2e,%+6.2e], v=[%+6.2e,%+6.2e,%+6.2e], a=[%+6.2e,%+6.2e,%+6.2e]\n            |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e",
+      return String.format("%10s: m=%6.3e, r=%6.3e, s=[%+6.2e,%+6.2e,%+6.2e], v=[%+6.2e,%+6.2e,%+6.2e], a=[%+6.2e,%+6.2e,%+6.2e]\n           |s|=%+6.2e  |v|=%+6.2e  |a|=%+6.2e",
             name, m, r, s.vector[0], s.vector[1], s.vector[2], v.vector[0], v.vector[1], v.vector[2], a.vector[0], a.vector[1], a.vector[2], s.length(), v.length(), a.length());
    }
 

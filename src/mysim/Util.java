@@ -76,5 +76,4 @@ public abstract class Util {
     * Asteroid "Chicxulub incubator" that had supposingly hit earth and lead to the extinction of most dinosaurs
     */
    protected static PhysicsObject3D CHICXULUB = new PhysicsObject3D("Chicxulub", R_CHICXULUB, M_CHICXULUB, new double[]{AU,0,0});
-
 }
