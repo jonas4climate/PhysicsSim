@@ -18,8 +18,8 @@ xline = np.linspace(0, 10, 30)
 yline = np.sin(zline)
 ax.plot3D(xline, yline, zline, 'blue')
 
-x,y,z = [1,2,3],[2,3,4],[3,4,5]
-ax.plot_wireframe(x,y,z)
+# x,y,z = [1,2,3],[2,3,4],[3,4,5]
+# ax.plot_wireframe(x,y,z)
 # Data for three-dimensional scattered points
 zdata = 1 * np.random.random(10)
 xdata = 1 * np.random.random(10)

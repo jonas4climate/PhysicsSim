@@ -61,7 +61,7 @@ public class Sim extends Util {
    private static final boolean REALTIME_ENABLED = false;
 
    /**
-    * Set to true to enable state updates during the simulation process. TODO implement class with more precise flags for customizing output and change to logging
+    * Set to true to enable state updates during the simulation process.
     */
    private static final boolean PRINT_VERBOSE = true;
 
