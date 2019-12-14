@@ -50,6 +50,21 @@ public class PhysicsObject3D implements Cloneable {
     * @param m mass
     * @param s position
     */
+    public PhysicsObject3D(double r, double m, double[] s) {
+      this.name = ID.toString();
+      this.r = r;
+      this.m = m;
+      this.s.setVector(s);
+      ID++;
+   }
+
+   /**
+    * 
+    * @param name name
+    * @param r radius
+    * @param m mass
+    * @param s position
+    */
    public PhysicsObject3D(String name, double r, double m, double[] s) {
       this.name = name;
       this.r = r;

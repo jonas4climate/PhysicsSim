@@ -16,6 +16,7 @@ public class Sim extends Util {
     *  Modelled time of Sim in s
     */
    public static final int SIM_T_S = ORBITAL_PERIOD_EARTH/12;
+
    /**
     * Delta Time (Timestep) in ms
     */
@@ -29,7 +30,7 @@ public class Sim extends Util {
    /**
     * number of iterations of modelStep to complete simulation
     */
-   public static final int N = (int) (SIM_T_S * (1 / DT_S));
+   public static final int N = (int) (SIM_T_S / DT_S);
 
    /**
     * Keeps track of current time of simulation
@@ -46,8 +47,7 @@ public class Sim extends Util {
    private static ArrayList<PhysicsObject3D> physicsObjects = new ArrayList<>();
 
    /**
-    * Deepcopy of initial physicsObject before simulation starts to 
-    * compare final results using realtime value comparison with equational truths
+    * Deepcopy of initial physicsObject before start of simulation
     */
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
 
@@ -67,7 +67,7 @@ public class Sim extends Util {
 
    /**
     * Determines after how much passed time (in s) it prints the current state of the simulation.
-    * Increeasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
+    * Increasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
     */
    private static final double PRINT_DT = SIM_T_S/30;
 
@@ -194,7 +194,7 @@ public class Sim extends Util {
       // Stop measuring time
       timerEnd = System.nanoTime();
 
-      // Adjust timing with Tread.sleep
+      // Adjust timing for REALTIME mode
       if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
@@ -218,7 +218,7 @@ public class Sim extends Util {
     */
    private static void gravity(PhysicsObject3D obj) {
       // Gravity Super Position Vector = total gravitational acceleration for this object
-      if (obj.m >= 0) {
+      if (obj.m > 0) {
          double[] gspV = new double[3];
          physicsObjects.forEach((obj2) -> {
             // If not same object and obj2 not massless
@@ -236,6 +236,8 @@ public class Sim extends Util {
          });
          for (int i = 0; i < 3; i++)
             obj.a.vector[i] += gspV[i];
+      } else {
+
       }
    }
 
@@ -262,23 +264,23 @@ public class Sim extends Util {
     * @param obj2 colliding object
     */
    private static void handleCollisions(PhysicsObject3D obj, PhysicsObject3D obj2) {
-      // For new_m
+      // For new m
       double new_m = obj.m + obj2.m;
 
 
-      // For new_r
+      // For new r
       double totalVol = obj.getVolume() + obj2.getVolume();
       double new_r = Math.sqrt(totalVol/((4/3)*Math.PI));
 
 
-      // For new_s
+      // For new s
       Vector3D helper_distance_vector = Vector3D.substract(obj2.s, obj.s);
       helper_distance_vector.scale(0.5);
 
       Vector3D new_s = Vector3D.add(obj.s, helper_distance_vector);
 
 
-      // For new_v
+      // For new v
       double obj_Ekin = obj.getKineticEnergy();
       double obj2_Ekin = obj2.getKineticEnergy();
       double totalKin = obj_Ekin + obj2_Ekin;
