@@ -1,6 +1,8 @@
 package mysim;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Stack;
 
 /**
@@ -310,6 +312,7 @@ public class Sim extends Util {
    private static void printInitialState() {
       System.out.println("\nSimulator settings for simulation:");
       System.out.println("----------------------------------");
+      System.out.println("Simulation performed at: " + Calendar.getInstance().getTime().toString());
       System.out.println(String.format("Simulated time = %dd %dh %dm %ds \nSimulation steps (precision) = %.3fs \nREALTIME_ENABLED = %b \nPRINT_VERBOSE = %b",
        SIM_T_S / 86400, SIM_T_S % 86400 / 3600, SIM_T_S % 3600 / 60, SIM_T_S % 60, // time of sim in d h m s
        DT_S, REALTIME_ENABLED, PRINT_VERBOSE));
