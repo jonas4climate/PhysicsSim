@@ -18,3 +18,11 @@ At every time step:
 4. Using approach 3, we have determined that two objects have a path that has the potential to cross. But we don't know if they actually hit each other without accounting for the position over time, the object could have a hitbox but would be hit by another object after it left this position already. Now what we have left is just to sub-model the collision path in steps and check for those steps if the objects actually DO collide.
 
 Now, this was just my train of thought but we might be able to use some geometry and algebra to assist us in deciding on which solution is computationally reasonable while giving realistic collision detection.
+
+---
+ 
+I have currently implemented version 2 of the previous list. I believe an improved version could be implemented as follows:
+- Given a significant threshold that allows for possibility of collision (in order to improve runtime performance)
+- Get the linear equations for both objects from their move of old to new position: $s(\lambda) = s_{init} + \lambda \cdot (s_{new} - s_{init})$
+- Find shortest distance $d$ between both lines
+- If $d < r_{obj1} + r_{obj2}$ we have a collision and handle the collision as already implemented by merging the objects as non-elastic collision
