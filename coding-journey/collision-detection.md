@@ -23,6 +23,7 @@ Now, this was just my train of thought but we might be able to use some geometry
  
 I have currently implemented version 2 of the previous list. I believe an improved version could be implemented as follows:
 - Given a significant threshold that allows for possibility of collision (in order to improve runtime performance)
-- Get the linear equations for both objects from their move of old to new position: $s(\lambda) = s_{init} + \lambda \cdot (s_{new} - s_{init})$
+- Get the linear equations for both objects from their move of old to new position: 
+  $s(\lambda) = s_{init} + \lambda \cdot (s_{new} - s_{init})$ with $0 \leq \lambda \leq timestep$
 - Find shortest distance $d$ between both lines
 - If $d < r_{obj1} + r_{obj2}$ we have a collision and handle the collision as already implemented by merging the objects as non-elastic collision
