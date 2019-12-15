@@ -1,9 +1,12 @@
-all: 
+compile:
 	mkdir -p bin
-	mkdir -p logs
 	javac -d bin -sourcepath src src/mysim/Sim.java
 
-run: all
+all: compile
+	java -cp bin mysim/Sim
+
+log: compile
+	mkdir -p log
 	java -cp bin mysim/Sim  > logs/raw.log
 
 javadoc:

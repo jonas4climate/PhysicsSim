@@ -45,7 +45,6 @@ public class PhysicsObject3D implements Cloneable {
 
    /**
     * 
-    * @param name name
     * @param r radius
     * @param m mass
     * @param s position
@@ -90,8 +89,8 @@ public class PhysicsObject3D implements Cloneable {
 
    /**
     * 
-    * @param m mass
     * @param r radius
+    * @param m mass
     * @param s position
     * @param v velocity
     */
