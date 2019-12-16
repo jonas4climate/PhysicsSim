@@ -12,13 +12,13 @@ public abstract class Setup extends Util {
    /**
     *  Time the simulation will model
     */
-   protected static final long SIM_T_S = (long) 40 * ORBITAL_PERIOD_EARTH;
+   protected static final long SIM_T_S = (long) 1 * ORBITAL_PERIOD_EARTH;
 
    /**
     * Delta Time (Timestep) in ms. This is the time that is modelled every time modelStep executes.
     * The lower this value the smaller the modelled increments and therefore the more precise the simulation
     */
-   protected static final int DT_MS = 10000;
+   protected static final int DT_MS = 5000;
 
 
 
@@ -52,7 +52,7 @@ public abstract class Setup extends Util {
     * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.
     * Increasing this or setting PRINT_VERBOSE = false increases simulation speed as it reduces I/O operations.
     */
-   protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH;
+   protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH/2;
 
    /**
     * Adds all objects that should be modelled in the simulation

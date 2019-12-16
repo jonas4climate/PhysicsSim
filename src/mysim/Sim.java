@@ -114,7 +114,7 @@ public class Sim extends Setup {
       }
 
       totalTimerEnd = System.nanoTime();
-      
+
       printFinalState();
    }
 
@@ -315,10 +315,13 @@ public class Sim extends Setup {
       }
       System.out.println("\nSimulator settings for simulation:");
       System.out.println("----------------------------------");
-      System.out.println("Simulation performed at: " + Calendar.getInstance().getTime().toString());
-      System.out.println(String.format("Simulated time = %dd %dh %dm %ds \nSimulation steps (precision) = %.3fs \nREALTIME_ENABLED = %b \nPRINT_VERBOSE = %b",
-       SIM_T_S / 86400, SIM_T_S % 86400 / 3600, SIM_T_S % 3600 / 60, SIM_T_S % 60, // time of sim in d h m s
-       DT_S, REALTIME_ENABLED, PRINT_VERBOSE));
+      System.out.println(String.format("Simulation performed at: %s\nSimulated time = %dd %dh %dm %ds \nSimulation steps (precision) = %.3fs \nREALTIME_ENABLED = %b \nPRINT_VERBOSE = %b", 
+      Calendar.getInstance().getTime().toString(), 
+      SIM_T_S / 86400, SIM_T_S % 86400 / 3600, SIM_T_S % 3600 / 60, SIM_T_S % 60, // time of sim in d h m s
+      DT_S, 
+      REALTIME_ENABLED, 
+      PRINT_VERBOSE));
+
       if (PRINT_INITIALIZATION_SLOW) {
          try {
             Thread.sleep(5000);
