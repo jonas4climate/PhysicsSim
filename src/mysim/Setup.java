@@ -15,7 +15,8 @@ public abstract class Setup extends Util {
    protected static final int SIM_T_S = 10 * ORBITAL_PERIOD_EARTH;
 
    /**
-    * Delta Time (Timestep) in ms
+    * Delta Time (Timestep) in ms. This is the time that is modelled every time modelStep executes.
+    * The lower this value the smaller the modelled increments and therefore the more precise the simulation
     */
    protected static final int DT_MS = 10000;
 
@@ -24,7 +25,7 @@ public abstract class Setup extends Util {
    /******************** SIMULATION OBJECTS ********************/
 
    /**
-    * List containing all currently existing objects in the Sim
+    * List containing all currently existing objects in the Sim.
     */
    protected static ArrayList<PhysicsObject3D> physicsObjects = new ArrayList<>();
 
@@ -33,24 +34,24 @@ public abstract class Setup extends Util {
   /******************** MODES ********************/
 
    /**
-    * Slows simulation down to realtime //TODO test for simulations running very slowly. It would attempt to make thread sleep < 0s?
-    */
-  protected static final boolean REALTIME_ENABLED = false;
+    * Slows simulation down to realtime
+   */
+   protected static final boolean REALTIME_ENABLED = false; //TODO test for simulations running very slowly. It would attempt to make thread sleep < 0s?
 
-    /**
-     * Set to true to enable state updates during the simulation process.
-     */
+   /**
+    * Receive state updates during the simulation process according to PRINT_DT.
+   */
    protected static final boolean PRINT_VERBOSE = true;
  
-    /**
-     * Allow user to review simulation information and have countdown before simulation start (not recommended for logging or when performance is priority)
-     */
-   protected static final boolean PRINT_INITIALIZATION_SLOW = false;
+   /**
+    * Allow user to review simulation information and have countdown before simulation start (not recommended for logging or when performance is priority)
+    */
+   protected static final boolean PRINT_INITIALIZATION_SLOW = true;
  
-    /**
-     * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.
-     * Increasing this or setting PRINT_VERBOSE = false increases simulation speed.
-     */
+   /**
+    * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.
+    * Increasing this or setting PRINT_VERBOSE = false increases simulation speed as it reduces I/O operations.
+    */
    protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH / 12; //TODO resolve modulo issue
 
    /**
