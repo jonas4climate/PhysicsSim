@@ -8,7 +8,6 @@ run: compile
 log: compile
 	mkdir -p logs
 	java -cp bin mysim/Sim  > logs/raw.log
-	cp logs/raw.log example.log
 
 javadoc:
 	javadoc src/mysim/* -d javadocs
@@ -16,5 +15,3 @@ javadoc:
 clean: 
 	rm -rf logs
 	rm -rf bin
-	rm -f example.log
-	rm -f example-log.png
