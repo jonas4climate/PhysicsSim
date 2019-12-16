@@ -1,6 +1,10 @@
 
+To view this simulation, please set Terminal width > 141
+
+
 Simulator settings for simulation:
 ----------------------------------
+Simulation performed at: Mon Dec 16 02:12:52 CET 2019
 Simulated time = 30d 10h 30m 45s 
 Simulation steps (precision) = 0.100s 
 REALTIME_ENABLED = false 
@@ -11,29 +15,19 @@ Objects in the simulation:
 --------------------------
      Earth: m=5.972e+24, r=6.378e+06, s=[+1.50e+11,+0.00e+00,+0.00e+00], v=[+0.00e+00,+2.98e+04,+0.00e+00], a=[+0.00e+00,+0.00e+00,+0.00e+00]
            |s|=+1.50e+11  |v|=+2.98e+04  |a|=+0.00e+00
-            3.84e+08m away from Moon.
-            1.50e+11m away from Sun.
-            1.50e+11m away from Huge mass.
 
       Moon: m=7.246e+22, r=1.738e+06, s=[+1.50e+11,+0.00e+00,+0.00e+00], v=[+0.00e+00,+3.08e+04,+0.00e+00], a=[+0.00e+00,+0.00e+00,+0.00e+00]
            |s|=+1.50e+11  |v|=+3.08e+04  |a|=+0.00e+00
-            3.84e+08m away from Earth.
-            1.50e+11m away from Sun.
-            1.50e+11m away from Huge mass.
 
        Sun: m=1.988e+30, r=6.957e+08, s=[+0.00e+00,+0.00e+00,+0.00e+00], v=[+0.00e+00,+0.00e+00,+0.00e+00], a=[+0.00e+00,+0.00e+00,+0.00e+00]
            |s|=+0.00e+00  |v|=+0.00e+00  |a|=+0.00e+00
-            1.50e+11m away from Earth.
-            1.50e+11m away from Moon.
-            2.12e+11m away from Huge mass.
 
  Huge mass: m=1.988e+32, r=6.957e+09, s=[+1.50e+11,+0.00e+00,+1.50e+11], v=[+0.00e+00,+0.00e+00,+0.00e+00], a=[+0.00e+00,+0.00e+00,+0.00e+00]
            |s|=+2.12e+11  |v|=+0.00e+00  |a|=+0.00e+00
-            1.50e+11m away from Earth.
-            1.50e+11m away from Moon.
-            2.12e+11m away from Sun.
 
 
+-Simulation Start Timer-
+54321 
 
 
 Progress 3% - Result for 87661.00s:

@@ -6,8 +6,9 @@ all: compile
 	java -cp bin mysim/Sim
 
 log: compile
-	mkdir -p log
+	mkdir -p logs
 	java -cp bin mysim/Sim  > logs/raw.log
+	cp logs/raw.log example.log
 
 javadoc:
 	javadoc src/mysim/* -d javadocs

@@ -342,27 +342,24 @@ public class Sim extends Util {
       System.out.println("--------------------------");
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
-         physicsObjects.forEach((obj2) -> {
+         /*physicsObjects.forEach((obj2) -> {
             if (obj != obj2)
                System.out.println(String.format("            %6.2em away from %s.", Vector3D.distance(obj.s, obj2.s), obj2.name));
-         });
+         });*/
          System.out.println();
       });
       if (PRINT_INITIALIZATION_SLOW) {
          try {
             System.out.println("\n-Simulation Start Timer-");
             Thread.sleep(1000);
-            System.out.print("5");
-            Thread.sleep(1000);
-            System.out.print("\b4");
-            Thread.sleep(1000);
-            System.out.print("\b3");
-            Thread.sleep(1000);
-            System.out.print("\b2");
-            Thread.sleep(1000);
-            System.out.print("\b1");
-            Thread.sleep(1000);
-            System.out.print("\b ");
+            for (int i = 5; i > 0; i--) {
+               System.out.print(i);
+               Thread.sleep(250);
+               for (int j = 0; j < 3; j++) {
+                  System.out.print(".");
+                  Thread.sleep(250);
+               }
+            }
          } catch (Exception e) {
             e.printStackTrace();
          }
