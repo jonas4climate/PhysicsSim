@@ -3,6 +3,7 @@ package mysim;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -66,6 +67,11 @@ public class Sim extends Util {
     * Set to true to enable state updates during the simulation process.
     */
    private static final boolean PRINT_VERBOSE = true;
+
+   /**
+    * Set to true to allow user to review simulation information
+    */
+   private static final boolean PRINT_INITIALIZATION_SLOW = true;
 
    /**
     * Determines after how much passed time (in s) it prints the current state of the simulation.
@@ -310,12 +316,28 @@ public class Sim extends Util {
    }
 
    private static void printInitialState() {
+      // Disabling timer currently not allowed so user verify their input at simulation begin
+      System.out.println("\nTo view this simulation, please set Terminal width > 141\n");
+      if (PRINT_INITIALIZATION_SLOW) {
+         try {
+            Thread.sleep(3000);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      }
       System.out.println("\nSimulator settings for simulation:");
       System.out.println("----------------------------------");
       System.out.println("Simulation performed at: " + Calendar.getInstance().getTime().toString());
       System.out.println(String.format("Simulated time = %dd %dh %dm %ds \nSimulation steps (precision) = %.3fs \nREALTIME_ENABLED = %b \nPRINT_VERBOSE = %b",
        SIM_T_S / 86400, SIM_T_S % 86400 / 3600, SIM_T_S % 3600 / 60, SIM_T_S % 60, // time of sim in d h m s
        DT_S, REALTIME_ENABLED, PRINT_VERBOSE));
+      if (PRINT_INITIALIZATION_SLOW) {
+         try {
+            Thread.sleep(5000);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      }
       System.out.println("\n\nObjects in the simulation:");
       System.out.println("--------------------------");
       physicsObjects.forEach((obj) -> {
@@ -326,6 +348,25 @@ public class Sim extends Util {
          });
          System.out.println();
       });
+      if (PRINT_INITIALIZATION_SLOW) {
+         try {
+            System.out.println("\n-Simulation Start Timer-");
+            Thread.sleep(1000);
+            System.out.print("5");
+            Thread.sleep(1000);
+            System.out.print("\b4");
+            Thread.sleep(1000);
+            System.out.print("\b3");
+            Thread.sleep(1000);
+            System.out.print("\b2");
+            Thread.sleep(1000);
+            System.out.print("\b1");
+            Thread.sleep(1000);
+            System.out.print("\b ");
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      }
       System.out.println("\n");
    }
 
