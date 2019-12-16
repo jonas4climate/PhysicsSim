@@ -6,32 +6,21 @@ import java.util.Stack;
 
 /**
  * Main class running the simulation and updates.
- * Note that reducing DT reduces truncation error.
  */
-public class Sim extends Util {
+public class Sim extends Setup {
  
 
    /******************** TIME ********************/
 
    /**
-    *  Modelled time of Sim in s
-    */
-   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH*10;
-
-   /**
-    * Delta Time (Timestep) in ms
-    */
-   public static final int DT_MS = 10000;
-
-   /**
     * Delta Time (Timestep for modelling) in s
     */
-   public static final double DT_S = ((double)DT_MS / 1000);
+   private static final double DT_S = ((double)DT_MS / 1000);
 
    /**
     * number of iterations of modelStep to complete simulation
     */
-   public static final int N = (int) (SIM_T_S / DT_S);
+   private static final int N = (int) (SIM_T_S / DT_S);
 
    /**
     * Keeps track of current time of simulation in seconds
@@ -43,39 +32,9 @@ public class Sim extends Util {
    /******************** SIMULATION OBJECTS ********************/
 
    /**
-    * List containing all currently existing objects in the Sim
-    */
-   private static ArrayList<PhysicsObject3D> physicsObjects = new ArrayList<>();
-
-   /**
     * Deepcopy of initial physicsObject before start of simulation
     */
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
-
-
-
-   /******************** MODES ********************/
-
-   /**
-    * Slows simulation down to realtime
-    */
-   private static final boolean REALTIME_ENABLED = false;
-
-   /**
-    * Set to true to enable state updates during the simulation process.
-    */
-   private static final boolean PRINT_VERBOSE = true;
-
-   /**
-    * Set to true to allow user to review simulation information
-    */
-   private static final boolean PRINT_INITIALIZATION_SLOW = false;
-
-   /**
-    * Determines after how much passed time (in s) it prints the current state of the simulation.
-    * Increasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
-    */
-   private static final double PRINT_DT = ORBITAL_PERIOD_EARTH/4; //TODO improve modulo issue
 
 
 
@@ -92,20 +51,18 @@ public class Sim extends Util {
    private static long timerEnd;
 
    /**
-    * Contains all objects that are supposed to be removed after lambda-looping over all objects. (Currently all objects colliding)
+    * Contains all objects that are supposed to be removed (due to collision) after lambda-looping over all objects.
     */
    private static Stack<PhysicsObject3D> objToRemove = new Stack<PhysicsObject3D>();
 
    /**
-    * Contains all objects that are supposed to be added after lambda-looping over all objects. (Currently all objects created after collision)
+    * Contains all objects that are supposed to be added (due to collision) after lambda-looping over all objects.
     */
    private static Stack<PhysicsObject3D> objToAdd = new Stack<PhysicsObject3D>();
 
 
 
    public static void main(String[] args) throws InterruptedException {
-      // Current model simulates solar system but with one huge unusual object to display and test new collision feature
-
       // create space with objects
       setup();
 
@@ -113,7 +70,7 @@ public class Sim extends Util {
          currentTimeInSim += DT_S;
 
          if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
-            System.out.println(String.format("\nProgress %.0f%% - Result for %dd %dh %dm %ds:",  //TODO Progress percentage more accurate
+            System.out.println(String.format("\nProgress %.0f%% - Result for %dd %dh %dm %ds:",  //TODO make Progress percentage more accurate
             (double) (((long)100*i)/N), (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
             (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
             System.out.println("-------------------------------------");
@@ -129,15 +86,10 @@ public class Sim extends Util {
    }
 
    /**
-    * Setup before entering simulation environment. Add all simulation objects here and print initial setup of simulation. 
-    * Also keep deepcopy of initial elements if you want to compare final values with it later
+    * Setup before entering simulation environment. Creates deepcopy of initial elements in case you would want to compare final values with it later
     */
    private static void setup() {
-      // Add objects
-      physicsObjects.add(EARTH);
-      physicsObjects.add(MOON);
-      physicsObjects.add(SUN);
-      //physicsObjects.add(new PhysicsObject3D("Huge mass", R_SUN * 10, M_SUN * 100, new double[]{AU,0,AU}));
+      Setup.addModelledObjects();
 
       // State at begin of simulation (t = 0s)
       printInitialState();
@@ -374,7 +326,7 @@ public class Sim extends Util {
    private static void printFinalState() {
       System.out.println("SIMULATION COMPLETED.\n");
       //System.out.println(String.format("Runtime = %ds"),runtime); //TODO add runtime
-      System.out.println(String.format("Progress 100%% - Final state at %dd %dh %dm %ds:", 
+      System.out.println(String.format("Final state at %dd %dh %dm %ds:", 
       (int) (SIM_T_S / 86400), (int) (SIM_T_S % 86400 / 3600), (int) (SIM_T_S % 3600 / 60), (int) (SIM_T_S % 60)));
       System.out.println("-------------------------------------");
       physicsObjects.forEach((obj) -> {

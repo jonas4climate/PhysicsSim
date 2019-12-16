@@ -1,0 +1,65 @@
+package mysim;
+
+import java.util.ArrayList;
+
+/**
+ * Class used to set up the simulator with all necessary information. Look into Util for constants or pre-defined objects.
+ */
+public abstract class Setup extends Util {
+
+   /******************** TIME ********************/
+
+   /**
+    *  Time the simulation will model
+    */
+   protected static final int SIM_T_S = 10 * ORBITAL_PERIOD_EARTH;
+
+   /**
+    * Delta Time (Timestep) in ms
+    */
+   protected static final int DT_MS = 10000;
+
+
+
+   /******************** SIMULATION OBJECTS ********************/
+
+   /**
+    * List containing all currently existing objects in the Sim
+    */
+   protected static ArrayList<PhysicsObject3D> physicsObjects = new ArrayList<>();
+
+
+
+  /******************** MODES ********************/
+
+   /**
+    * Slows simulation down to realtime //TODO test for simulations running very slowly. It would attempt to make thread sleep < 0s?
+    */
+  protected static final boolean REALTIME_ENABLED = false;
+
+    /**
+     * Set to true to enable state updates during the simulation process.
+     */
+   protected static final boolean PRINT_VERBOSE = true;
+ 
+    /**
+     * Allow user to review simulation information and have countdown before simulation start (not recommended for logging or when performance is priority)
+     */
+   protected static final boolean PRINT_INITIALIZATION_SLOW = false;
+ 
+    /**
+     * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.
+     * Increasing this or setting PRINT_VERBOSE = false increases simulation speed.
+     */
+   protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH / 12; //TODO resolve modulo issue
+
+   /**
+    * Adds all objects that should be modelled in the simulation
+    */
+   protected static void addModelledObjects() {
+      physicsObjects.add(EARTH);
+      physicsObjects.add(MOON);
+      physicsObjects.add(SUN);
+      //physicsObjects.add(new PhysicsObject3D("Huge mass", R_SUN * 10, M_SUN * 100, new double[]{AU,0,AU}));
+   }
+}
