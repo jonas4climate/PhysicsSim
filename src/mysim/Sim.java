@@ -2,8 +2,6 @@ package mysim;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -18,12 +16,12 @@ public class Sim extends Util {
    /**
     *  Modelled time of Sim in s
     */
-   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH/12;
+   public static final int SIM_T_S = ORBITAL_PERIOD_EARTH*10;
 
    /**
     * Delta Time (Timestep) in ms
     */
-   public static final int DT_MS = 100;
+   public static final int DT_MS = 10000;
 
    /**
     * Delta Time (Timestep for modelling) in s
@@ -71,13 +69,13 @@ public class Sim extends Util {
    /**
     * Set to true to allow user to review simulation information
     */
-   private static final boolean PRINT_INITIALIZATION_SLOW = true;
+   private static final boolean PRINT_INITIALIZATION_SLOW = false;
 
    /**
     * Determines after how much passed time (in s) it prints the current state of the simulation.
     * Increasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = SIM_T_S/30;
+   private static final double PRINT_DT = ORBITAL_PERIOD_EARTH/12;
 
 
 
@@ -137,7 +135,7 @@ public class Sim extends Util {
       physicsObjects.add(EARTH);
       physicsObjects.add(MOON);
       physicsObjects.add(SUN);
-      physicsObjects.add(new PhysicsObject3D("Huge mass", R_SUN * 10, M_SUN * 100, new double[]{AU,0,AU}));
+      //physicsObjects.add(new PhysicsObject3D("Huge mass", R_SUN * 10, M_SUN * 100, new double[]{AU,0,AU}));
 
       // State at begin of simulation (t = 0s)
       printInitialState();
@@ -162,6 +160,7 @@ public class Sim extends Util {
 
          // collision detection
          physicsObjects.forEach((obj2) -> {
+            // Make sure that objects that are checked for collision have not already collided before
             if (obj != obj2 && primitiveCollisionCheck(obj, obj2) && !(objToRemove.contains(obj) || objToRemove.contains(obj2)))
                handleCollisions(obj, obj2);
          });

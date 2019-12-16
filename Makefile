@@ -2,7 +2,7 @@ compile:
 	mkdir -p bin
 	javac -d bin -sourcepath src src/mysim/Sim.java
 
-all: compile
+run: compile
 	java -cp bin mysim/Sim
 
 log: compile
@@ -14,5 +14,7 @@ javadoc:
 	javadoc src/mysim/* -d javadocs
 
 clean: 
-	rm -r logs
-	rm -r bin
+	rm -rf logs
+	rm -rf bin
+	rm -f example.log
+	rm -f example-log.png
