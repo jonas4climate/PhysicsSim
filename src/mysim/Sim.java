@@ -20,12 +20,12 @@ public class Sim extends Setup {
    /**
     * number of iterations of modelStep to complete simulation
     */
-   private static final int N = (int) (SIM_T_S / DT_S);
+   private static final long N = (long) (SIM_T_S / DT_S);
 
    /**
     * Keeps track of current time of simulation in seconds
     */
-   private static double currentTimeInSim = 0d;
+   private static double timeInSim = 0d;
 
    
 
@@ -36,19 +36,39 @@ public class Sim extends Setup {
     */
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
 
+   /******************** MODES UTIL ********************/
+   /**
+    * Flag whether to print this iteration or not
+    */
+   private static boolean printThisIter = false;
 
 
-   /******************** UTIL ********************/
+   /******************** OTHERS ********************/
 
    /**
     * Used for timekeeping for Thread.sleep in REALTIME mode
     */
-   private static long timerStart;
+   private static long REALTIME_timerStart;
 
    /**
     * Used for timekeeping for Thread.sleep in TREALTIME mode
     */
-   private static long timerEnd;
+   private static long REALTIME_timerEnd;
+
+   /**
+    * Time at start of simulation
+    */
+   private static long totalTimerStart;
+
+   /**
+    * Time at end of simulation
+    */
+   private static long totalTimerEnd;
+
+   /**
+    * Counting time and modified at runtime to manage when to print
+    */
+   private static double timeForPrint;
 
    /**
     * Contains all objects that are supposed to be removed (due to collision) after lambda-looping over all objects.
@@ -63,26 +83,39 @@ public class Sim extends Setup {
 
 
    public static void main(String[] args) throws InterruptedException {
-      // create space with objects
       setup();
 
-      for (int i = 1; i <= N ; i++) {
-         currentTimeInSim += DT_S;
+      totalTimerStart = System.nanoTime();
 
-         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
+      while (timeInSim < SIM_T_S) {
+         timeInSim += DT_S;
+
+         // Manage priting at correct iterations based on PRINT_DT
+         timeForPrint += DT_S;
+         if (timeForPrint > PRINT_DT) {
+            timeForPrint -= PRINT_DT;
+            printThisIter = true;
+         } else {
+            printThisIter = false;
+         }
+
+
+         if (PRINT_VERBOSE && printThisIter) {
             System.out.println(String.format("\nProgress %.2f%% - Result for %dd %dh %dm %ds:",
-            (100*currentTimeInSim/DT_S)/N, (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
-            (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
+            (100*timeInSim/DT_S)/N, (int) (timeInSim / 86400), (int) (timeInSim % 86400 / 3600), 
+            (int) (timeInSim % 3600 / 60), (int) (timeInSim % 60)));
             System.out.println("-------------------------------------");
          }
             
          modelStep();
 
-         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0)
+         if (PRINT_VERBOSE && printThisIter)
             System.out.println();
       }
+
+      totalTimerEnd = System.nanoTime();
+      
       printFinalState();
-      //compareSimAndEquations();
    }
 
    /**
@@ -126,7 +159,7 @@ public class Sim extends Setup {
          }
 
          // print distance to other objects in the simulation
-         if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
+         if (PRINT_VERBOSE && printThisIter) {
             System.out.println(obj);
             physicsObjects.forEach((obj2) -> {
                if (obj != obj2)
@@ -153,24 +186,25 @@ public class Sim extends Setup {
 
 
       // Stop measuring time
-      timerEnd = System.nanoTime();
+      REALTIME_timerEnd = System.nanoTime();
 
       // Adjust timing for REALTIME mode
       if (REALTIME_ENABLED) {
          try {
             int passedTimeInMs = 0;
             // First iteration ignores this
-            if (timerStart != 0)
-               passedTimeInMs = (int) Math.abs(((timerEnd - timerStart) / 1000000)); // Nanotime not necessarily positive
+            if (REALTIME_timerStart != 0)
+               passedTimeInMs = (int) Math.abs(((REALTIME_timerEnd - REALTIME_timerStart) / 1000000)); // Nanotime not necessarily positive
             Thread.sleep(DT_MS - passedTimeInMs); // simulate realtime
          } catch (IllegalArgumentException e) {
+            System.out.println("IllegalArgumentException: Tried to make Thread sleep < 0ms. Potentially caused by simulation running too slowly to allow REALTIME_MODE.");
             e.printStackTrace();
-            return;
+            System.exit(1);
          }
       }
 
       // Start measuring time
-      timerStart = System.nanoTime();
+      REALTIME_timerStart = System.nanoTime();
    }
 
    /**
@@ -262,8 +296,8 @@ public class Sim extends Setup {
 
       if (PRINT_VERBOSE) {
          System.out.println("\n-----------------------------------------");
-         System.out.println(String.format("Progress %.0f%% - Event occured at %dd %dh %dm %ds:", (100*currentTimeInSim/DT_S)/N, (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
-         (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
+         System.out.println(String.format("Progress %.0f%% - Event occured at %dd %dh %dm %ds:", (100*timeInSim/DT_S)/N, (int) (timeInSim / 86400), (int) (timeInSim % 86400 / 3600), 
+         (int) (timeInSim % 3600 / 60), (int) (timeInSim % 60)));
          System.out.println(String.format("\nCollision of %s and %s occured. Objects merged into new object %s\n\n%s", obj.name, obj2.name, collisionObj.name, collisionObj));
          System.out.println("-----------------------------------------\n");
       }
@@ -325,11 +359,13 @@ public class Sim extends Setup {
     * Prints state at the end of the simulation
     */
    private static void printFinalState() {
-      System.out.println("SIMULATION COMPLETED.\n");
-      //System.out.println(String.format("Runtime = %ds"),runtime); //TODO add runtime
+      long runtime = totalTimerEnd - totalTimerStart; // in ns
+      System.out.println("SIMULATION COMPLETED!");
+      System.out.println("---------------------\n");
+      System.out.println(String.format("Runtime = %ds %dms %dμs %dηs\n", (runtime/1000000000) % 1000, (runtime/1000000) % 1000, (runtime/1000) % 1000, runtime % 1000));
       System.out.println(String.format("Final state at %dd %dh %dm %ds:", 
       (int) (SIM_T_S / 86400), (int) (SIM_T_S % 86400 / 3600), (int) (SIM_T_S % 3600 / 60), (int) (SIM_T_S % 60)));
-      System.out.println("-------------------------------------");
+      System.out.println("-------------------------------");
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
          physicsObjects.forEach((obj2) -> {

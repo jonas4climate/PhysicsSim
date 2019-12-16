@@ -12,7 +12,7 @@ public abstract class Setup extends Util {
    /**
     *  Time the simulation will model
     */
-   protected static final int SIM_T_S = 10 * ORBITAL_PERIOD_EARTH;
+   protected static final long SIM_T_S = (long) 40 * ORBITAL_PERIOD_EARTH;
 
    /**
     * Delta Time (Timestep) in ms. This is the time that is modelled every time modelStep executes.
@@ -36,7 +36,7 @@ public abstract class Setup extends Util {
    /**
     * Slows simulation down to realtime
    */
-   protected static final boolean REALTIME_ENABLED = false; //TODO test for simulations running very slowly. It would attempt to make thread sleep < 0s?
+   protected static final boolean REALTIME_ENABLED = false;
 
    /**
     * Receive state updates during the simulation process according to PRINT_DT.
@@ -52,7 +52,7 @@ public abstract class Setup extends Util {
     * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.
     * Increasing this or setting PRINT_VERBOSE = false increases simulation speed as it reduces I/O operations.
     */
-   protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH / 12; //TODO resolve modulo issue
+   protected static final double PRINT_DT = ORBITAL_PERIOD_EARTH;
 
    /**
     * Adds all objects that should be modelled in the simulation

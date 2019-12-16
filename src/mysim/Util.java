@@ -1,7 +1,7 @@
 package mysim;
 
 /**
- * Helper class to set any physical constants used by the Simulator
+ * Helper class to set any physical constants used by the Simulator. Always uses SI units
  */
 public abstract class Util {
 
@@ -20,6 +20,9 @@ public abstract class Util {
     */
    protected static final double C = 299792458d;
 
+   /**
+    * mass of earth in kg
+    */
    protected static final double M_EARTH = 5.9722 * Math.pow(10, 24);
 
    /**
