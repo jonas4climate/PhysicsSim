@@ -46,7 +46,7 @@ public abstract class Setup extends Util {
    /**
     * Allow user to review simulation information and have countdown before simulation start (not recommended for logging or when performance is priority)
     */
-   protected static final boolean PRINT_INITIALIZATION_SLOW = true;
+   protected static final boolean PRINT_INITIALIZATION_SLOW = false;
  
    /**
     * Determines after how much passed time (in s) a status update of the current state of the simulation is printed.

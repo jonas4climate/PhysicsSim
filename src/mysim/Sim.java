@@ -70,8 +70,8 @@ public class Sim extends Setup {
          currentTimeInSim += DT_S;
 
          if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
-            System.out.println(String.format("\nProgress %.0f%% - Result for %dd %dh %dm %ds:",  //TODO make Progress percentage more accurate
-            (double) (((long)100*i)/N), (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
+            System.out.println(String.format("\nProgress %.2f%% - Result for %dd %dh %dm %ds:",
+            (100*currentTimeInSim/DT_S)/N, (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
             (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
             System.out.println("-------------------------------------");
          }
@@ -262,7 +262,8 @@ public class Sim extends Setup {
 
       if (PRINT_VERBOSE) {
          System.out.println("\n-----------------------------------------");
-         System.out.println(String.format("Progress %.0f%% - Event occured at %.2fs:", (double) (((long)100*(currentTimeInSim/DT_S))/N), currentTimeInSim));
+         System.out.println(String.format("Progress %.0f%% - Event occured at %dd %dh %dm %ds:", (100*currentTimeInSim/DT_S)/N, (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
+         (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
          System.out.println(String.format("\nCollision of %s and %s occured. Objects merged into new object %s\n\n%s", obj.name, obj2.name, collisionObj.name, collisionObj));
          System.out.println("-----------------------------------------\n");
       }
