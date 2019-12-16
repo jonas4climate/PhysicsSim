@@ -2,7 +2,7 @@
 
 In this private project I am creating a Physics Simulator in Java from scratch.
 
-The simulator is currently used to simulate **gravity in a 3D space** and is capable of simulating the Sun-Earth-Moon system over a year with astounding precision within seconds of runtime.
+The simulator is currently used to simulate **gravity in 3D space** and is capable of simulating [n-body-simulations](https://en.wikipedia.org/wiki/N-body_problem) such as Sun-Earth-Moon systems over years with astounding precision within seconds of runtime.
 
 The simulator comes with a variety of features including 
 - extensive output/logging
@@ -10,9 +10,9 @@ The simulator comes with a variety of features including
 - easy and centralized customizability
 - real-time mode
 
-All documentation can be generated running `./javadoc.sh`.
+All documentation can be generated running `make javadoc`.
 
-Have a look into the `example.log` file or modify the `Sim.java` class and run the `run.zsh` script to generate your own simulation log in the logs folder. 
+Have a look into the `example.log` and modify the `Sim.java` class as needed. Run `make run` to generate your own simulation with output to terminal or `make log` to move output into log file. 
 
 ![log](example-log.png)
 
