@@ -34,7 +34,7 @@ public class Sim extends Util {
    public static final int N = (int) (SIM_T_S / DT_S);
 
    /**
-    * Keeps track of current time of simulation
+    * Keeps track of current time of simulation in seconds
     */
    private static double currentTimeInSim = 0d;
 
@@ -75,7 +75,7 @@ public class Sim extends Util {
     * Determines after how much passed time (in s) it prints the current state of the simulation.
     * Increasing this or setting PRINT_VERBOSE to false greatly increases simulation speed.
     */
-   private static final double PRINT_DT = ORBITAL_PERIOD_EARTH/12;
+   private static final double PRINT_DT = ORBITAL_PERIOD_EARTH/4; //TODO improve modulo issue
 
 
 
@@ -110,10 +110,12 @@ public class Sim extends Util {
       setup();
 
       for (int i = 1; i <= N ; i++) {
-         currentTimeInSim = i * DT_S;
+         currentTimeInSim += DT_S;
 
          if (PRINT_VERBOSE && currentTimeInSim % PRINT_DT == 0) {
-            System.out.println(String.format("\nProgress %.0f%% - Result for %.2fs:", (double) (((long)100*i)/N), currentTimeInSim));
+            System.out.println(String.format("\nProgress %.0f%% - Result for %dd %dh %dm %ds:",  //TODO Progress percentage more accurate
+            (double) (((long)100*i)/N), (int) (currentTimeInSim / 86400), (int) (currentTimeInSim % 86400 / 3600), 
+            (int) (currentTimeInSim % 3600 / 60), (int) (currentTimeInSim % 60)));
             System.out.println("-------------------------------------");
          }
             
@@ -372,7 +374,8 @@ public class Sim extends Util {
    private static void printFinalState() {
       System.out.println("SIMULATION COMPLETED.\n");
       //System.out.println(String.format("Runtime = %ds"),runtime); //TODO add runtime
-      System.out.println(String.format("Progress 100%% - Final state at %ds:", SIM_T_S));
+      System.out.println(String.format("Progress 100%% - Final state at %dd %dh %dm %ds:", 
+      (int) (SIM_T_S / 86400), (int) (SIM_T_S % 86400 / 3600), (int) (SIM_T_S % 3600 / 60), (int) (SIM_T_S % 60)));
       System.out.println("-------------------------------------");
       physicsObjects.forEach((obj) -> {
          System.out.println(obj);
