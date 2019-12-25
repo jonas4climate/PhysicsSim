@@ -1,4 +1,4 @@
-package mysim;
+package physicssim;
 
 /**
  * 3D object entity class

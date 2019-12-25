@@ -1,6 +1,19 @@
-javadocs
-bin
-logs
+# Editors
 .vscode
 .idea
+.vim
+
+# MacOS
 .DS_Store
+
+.classpath
+.project
+.settings
+
+# Logs
+logs
+*.log
+
+# Gradle
+build
+.gradle

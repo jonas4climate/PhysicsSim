@@ -1,4 +1,4 @@
-package mysim;
+package physicssim;
 
 /**
  * Helper class to set any physical constants used by the Simulator. Always uses SI units

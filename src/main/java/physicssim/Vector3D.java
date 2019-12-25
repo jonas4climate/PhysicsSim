@@ -1,4 +1,4 @@
-package mysim;
+package physicssim;
 
 /**
  * vectors in 3D space and their operations
@@ -24,9 +24,9 @@ public class Vector3D implements Cloneable {
 
    /**
     * 
-    * @param a x
-    * @param b y
-    * @param c z
+    * @param x x coordinate
+    * @param y y coordinate
+    * @param z z coordinate
     */
    public Vector3D(double x, double y, double z) {
       this.vector = new double[] {x, y, z};
