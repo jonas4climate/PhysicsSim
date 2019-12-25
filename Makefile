@@ -1,17 +1,23 @@
+BIN="bin"
+SRC="src/main/java"
+SIM="src/main/java/physicssim/Sim.java"
+
 compile:
-	mkdir -p bin
-	javac -d bin -sourcepath src src/mysim/Sim.java
+	mkdir -p $(BIN)
+	javac -d $(BIN) -sourcepath $(SRC) $(SIM)
 
 run: compile
-	java -cp bin mysim/Sim
+	java -cp $(BIN) $(SIM)
 
 log: compile
 	mkdir -p logs
-	java -cp bin mysim/Sim  > logs/raw.log
+	java -cp $(BIN) $(SIM) > logs/raw.log
 
 javadoc:
-	javadoc src/mysim/* -d javadocs
+	javadoc $(SRC)/physicssim/* -d javadoc
 
 clean: 
 	rm -rf logs
-	rm -rf bin
+	rm -rf $(BIN)
+	rm -rf javadoc
+
