@@ -1,32 +1,35 @@
 package mysim;
 
 /**
- * Class to model 3D vectors and their operations for information such as s, v, a.
+ * vectors in 3D space and their operations
  */
 public class Vector3D implements Cloneable {
 
-   /**
-    * 3D Vector
-    */
    public double[] vector;
 
    /**
-    * Default constructor
+    * 
     */
    public Vector3D() {
       this.vector = new double[] {0,0,0};
    }
 
    /**
-    * Second constructor
-    * @param vector initial vector
+    * 
+    * @param vector vector (x,y,z)
     */
    public Vector3D(double[] vector) {
       this.vector = vector;
    }
 
-   public Vector3D(double a, double b, double c) {
-      this.vector = new double[] {a,b,c};
+   /**
+    * 
+    * @param a x
+    * @param b y
+    * @param c z
+    */
+   public Vector3D(double x, double y, double z) {
+      this.vector = new double[] {x, y, z};
    }
 
    /**

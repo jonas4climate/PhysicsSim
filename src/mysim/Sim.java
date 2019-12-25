@@ -7,7 +7,7 @@ import java.util.Stack;
 /**
  * Main class running the simulation and updates.
  */
-public class Sim extends Setup {
+public abstract class Sim extends Setup {
  
 
    /******************** TIME ********************/
@@ -25,7 +25,7 @@ public class Sim extends Setup {
    /**
     * Keeps track of current time of simulation in seconds
     */
-   private static double timeInSim = 0d;
+   private static double timeInSim;
 
    
 
@@ -36,14 +36,14 @@ public class Sim extends Setup {
     */
    private static ArrayList<PhysicsObject3D> initPhysicsObjects = new ArrayList<>();
 
-   /******************** MODES UTIL ********************/
-   /**
-    * Flag whether to print this iteration or not
-    */
-   private static boolean printThisIter = false;
 
 
    /******************** OTHERS ********************/
+
+   /**
+    * Flag whether to print this iteration or not
+    */
+   private static boolean printThisIter;
 
    /**
     * Used for timekeeping for Thread.sleep in REALTIME mode
@@ -92,8 +92,8 @@ public class Sim extends Setup {
 
          // Manage priting at correct iterations based on PRINT_DT
          timeForPrint += DT_S;
-         if (timeForPrint > PRINT_DT) {
-            timeForPrint -= PRINT_DT;
+         if (timeForPrint > PRINT_DT_S) {
+            timeForPrint -= PRINT_DT_S;
             printThisIter = true;
          } else {
             printThisIter = false;
