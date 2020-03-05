@@ -6,7 +6,7 @@ The simulator is currently used to simulate **gravity in 3D space** and is capab
 
 The simulator comes with a variety of features including 
 - extensive output/logging
-- collision detection and handling (physically accurate merging)
+- collision detection and handling (physically accurate inelastic collision)
 - easy and centralized customizability in the [Setup class](src/main/java/physicssim/Setup.java)
 - real-time mode
 
@@ -21,7 +21,7 @@ The project is built with gradle but alternatively can also be run using the mak
 
 ---
 
-Have a look into the `example.log` and modify the `Setup.java` class for your customized simulation. If you need more detailed features, add those to the main `Sim.java` class.   
+Have a look into the `example.log` file and modify the `Setup.java` class for your customized simulation. If you need more detailed features, add those to the main `Sim.java` class. Please use constants and predefined objects of the `Util.java` class.
 
 Example log file:
 

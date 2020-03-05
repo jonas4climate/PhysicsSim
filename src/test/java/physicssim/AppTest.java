@@ -9,5 +9,10 @@ import static org.junit.Assert.*;
 public class AppTest {
     @Test public void testValidSetup() {
         assertTrue("Cannot simulate negative time frame: " + Setup.SIM_T_S, Setup.SIM_T_S > 0);
+        assertTrue("Cannot simulate in 0ms time steps", Setup.DT_MS > 0);
+        if (Setup.PRINT_VERBOSE) {
+            assertTrue("Please assign value larger than 0", Setup.PRINT_DT_S > 0);
+            assertTrue("Please assign value lower than simulation time, otherwise there will be no feedback during runtime", Setup.SIM_T_S > Setup.PRINT_DT_S);
+        }
     }
 }
